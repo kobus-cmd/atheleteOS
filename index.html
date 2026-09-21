@@ -1,0 +1,2173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<title>AthleteOS v3.7</title>
+<style>
+:root{--bg:#0b0d10;--panel:#14181d;--panel2:#1b2027;--text:#f5f7fa;--muted:#9ca6b3;--line:#2a313a;--good:#67d39b;--warn:#f1c75b;--bad:#ff8b8b;--accent:#e8eef7}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{max-width:430px;margin:auto;min-height:100vh;padding:18px 16px 105px} .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+h1,h2,h3{margin:0} h1{font-size:28px} small,.note{color:var(--muted)} .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;margin:6px 0;font-size:15px}
+textarea{min-height:76px} button,.btn{width:100%;border:0;border-radius:13px;padding:13px;font-size:15px;font-weight:800;margin-top:9px;background:var(--accent);color:#101317;text-decoration:none;display:block;text-align:center}
+.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)} .danger{background:#3a2022;color:#ffd8d8}
+.hidden{display:none!important} .status{font-size:12px;margin-top:10px;min-height:18px} .good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(430px,100%);display:grid;grid-template-columns:repeat(5,1fr);background:#0e1115ef;border-top:1px solid var(--line);padding:10px 4px 18px;z-index:10}
+.tab{text-align:center;color:var(--muted);font-size:10px;cursor:pointer} .tab b{display:block;font-size:18px;margin-bottom:2px} .tab.active{color:var(--text)}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px} .metric{background:var(--panel2);padding:12px;border-radius:13px}
+.metric strong{font-size:21px;display:block} .row{display:flex;justify-content:space-between;gap:12px;align-items:center} .pill{display:inline-block;padding:6px 9px;background:#222a35;border-radius:999px;font-size:11px;margin:3px 4px 0 0}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--panel2);display:grid;place-items:center;font-weight:900}
+details{background:var(--panel);border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden} summary{list-style:none;padding:15px;cursor:pointer} summary::-webkit-details-marker{display:none}
+.detail{border-top:1px solid var(--line);padding:14px;color:var(--muted);line-height:1.5;font-size:13px}
+.entry{padding:12px 0;border-bottom:1px solid var(--line)} .entry:last-child{border:0} .entry-title{font-weight:800} .entry-date{font-size:11px;color:var(--muted)} .entry-sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45}
+.choice{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px} .choice button{margin:0;padding:11px 5px}
+.readiness-box{padding:14px;border-radius:15px;background:var(--panel2);margin-top:10px} .ready-green{border-left:4px solid var(--good)} .ready-yellow{border-left:4px solid var(--warn)} .ready-red{border-left:4px solid var(--bad)}
+.readiness-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.readiness-score{font-size:24px;font-weight:900}.readiness-confidence{font-size:10px;font-weight:900;padding:5px 8px;border-radius:999px;background:#222a35;text-transform:uppercase}.readiness-components{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.readiness-component{background:#171d24;border-radius:11px;padding:9px}.readiness-component span{display:block;font-size:10px;color:var(--muted);margin-bottom:3px}.readiness-component strong{font-size:15px}.readiness-context{margin-top:10px;padding:9px 10px;border-radius:10px;background:#222a35;font-size:11px;line-height:1.45}.readiness-method{margin-top:10px;background:transparent;border:0}.readiness-method summary{padding:5px 0;font-size:11px;color:var(--muted)}.readiness-method .detail{padding:9px 0 0;border-top:1px solid var(--line)}.check-row{display:flex;gap:9px;align-items:flex-start;margin-top:8px;padding:10px;background:var(--panel2);border-radius:12px}.check-row input{width:auto;margin:2px 0 0}.check-row label{font-size:13px;line-height:1.35}
+.set-row{display:grid;grid-template-columns:38px 1fr 1fr 1fr;gap:7px;align-items:center;margin:7px 0} .set-row input{margin:0;padding:9px} .set-head{font-size:11px;color:var(--muted);text-align:center}
+.exercise{background:var(--panel2);border-radius:14px;padding:12px;margin-top:10px} .exercise h4{margin:0 0 4px}
+.progress-line{height:7px;border-radius:8px;background:#252c35;overflow:hidden;margin-top:7px} .progress-line span{display:block;height:100%;background:var(--good)}
+
+.history-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden}
+.history-card summary{padding:14px 15px}
+.history-card .history-detail{border-top:1px solid var(--line);padding:14px 15px}
+.history-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.history-head-right{text-align:right;white-space:nowrap}
+.history-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.history-metric{background:var(--panel2);border-radius:12px;padding:10px}
+.history-metric span{display:block;font-size:11px;color:var(--muted);margin-bottom:2px}
+.history-metric strong{font-size:16px}
+.exercise-history{background:var(--panel2);border-radius:13px;padding:11px;margin-top:10px}
+.exercise-history-title{font-weight:800;margin-bottom:6px}
+.set-history{display:grid;grid-template-columns:34px 1fr 1fr 1fr;gap:6px;font-size:12px;padding:5px 0;border-bottom:1px solid var(--line)}
+.set-history:last-child{border-bottom:0}
+.next-target{margin-top:8px;padding:9px 10px;border-radius:10px;background:#222a35;font-size:12px}
+
+
+.bike-rx{background:linear-gradient(180deg,var(--panel2),#171d24);border:1px solid var(--line);border-radius:15px;padding:14px;margin-top:10px}
+.bike-rx h3{font-size:20px;margin:0 0 4px}
+.interval-row{display:grid;grid-template-columns:72px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.interval-row:last-child{border-bottom:0}
+.interval-label{color:var(--muted)}
+.power-target{font-weight:900}
+.library-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.library-item{background:var(--panel2);border-radius:13px;padding:12px;margin-top:8px}
+.library-item .row{align-items:flex-start}
+.ftp-card{display:grid;grid-template-columns:1fr 105px;gap:10px;align-items:end}
+.ftp-card input{margin:0}
+.reason-box{margin-top:9px;padding:10px;border-radius:11px;background:#222a35;font-size:12px;line-height:1.4}
+
+.run-rx{background:linear-gradient(180deg,var(--panel2),#171d24);border:1px solid var(--line);border-radius:15px;padding:14px;margin-top:10px}
+.run-rx h3{font-size:20px;margin:0 0 4px}
+.pace-target{font-weight:900}
+.cs-card{display:grid;grid-template-columns:1fr 105px;gap:10px;align-items:end}
+.cs-card input{margin:0}
+.durability-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.durability-metric{background:var(--panel2);border-radius:12px;padding:10px}
+.durability-metric span{display:block;font-size:11px;color:var(--muted)}
+.durability-metric strong{font-size:16px}
+
+
+.hr-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.hr-kpi{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:11px}
+.hr-kpi span{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
+.hr-kpi strong{font-size:18px}
+.hr-trend{font-size:11px;margin-top:3px;color:var(--muted)}
+.benchmark{background:var(--panel2);border-radius:13px;padding:12px;margin-top:9px}
+.benchmark .row{align-items:flex-start}
+.test-pass{color:#76d99b}.test-watch{color:#ffd36e}.test-fail{color:#ff8b8b}
+.hr-callout{padding:11px;border-radius:12px;background:#222a35;margin-top:10px;font-size:12px;line-height:1.45}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}\n
+.sync-row{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px}
+.sync-time{font-size:12px;color:var(--muted)}
+.freshness{display:inline-block;font-size:10px;font-weight:800;padding:4px 7px;border-radius:999px;margin-top:5px}
+.fresh-now{background:#183a2a;color:#79dda3}
+.fresh-old{background:#44351b;color:#ffd36e}
+.fresh-stale{background:#452326;color:#ff9b9b}
+.refresh-btn{width:auto!important;padding:9px 12px!important;margin:0!important}
+
+
+.history-wrap{position:relative;overflow:hidden;border-radius:16px;margin-bottom:10px}
+.history-delete{position:absolute;right:0;top:0;bottom:0;width:86px;background:#5a2227;color:#ffdfe1;display:grid;place-items:center;font-weight:900}
+.history-card{position:relative;z-index:2;margin-bottom:0!important;transition:transform .18s ease;background:var(--panel)}
+.dup-badge{display:inline-block;padding:4px 7px;border-radius:999px;background:#4a351c;color:#ffd36e;font-size:10px;font-weight:900;margin-top:5px}
+.source-badge{display:inline-block;padding:4px 7px;border-radius:999px;background:#222a35;font-size:10px;font-weight:800;margin-top:5px}
+.history-actions{display:flex;gap:8px;margin-top:10px}
+.history-actions button{margin:0}
+.delete-small{background:#3a2022;color:#ffd8d8}
+.merge-small{background:#223244;color:#dcecff}
+
+
+.strava-card{border-color:#3a2b24}
+.strava-btn{background:#fc4c02;color:white}
+.integration-status{font-size:12px;margin-top:7px;color:var(--muted)}
+
+.ai-card{margin-top:14px;padding:14px;border-radius:15px;background:#10151b;border:1px solid var(--line)}
+.ai-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}.ai-title{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.ai-badge{display:inline-block;padding:5px 8px;border-radius:999px;background:#222a35;font-size:10px;font-weight:900}.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ai-stat{background:var(--panel2);border-radius:12px;padding:10px}.ai-stat span{display:block;font-size:10px;color:var(--muted);margin-bottom:3px}.ai-stat strong{font-size:16px}.ai-chart{margin-top:10px;background:var(--panel2);border-radius:12px;padding:10px}.ai-chart svg{width:100%;height:150px;display:block;overflow:visible}.ai-zone{display:grid;grid-template-columns:32px 1fr 44px;gap:8px;align-items:center;font-size:11px;margin:7px 0}.ai-bar{height:8px;background:#252c35;border-radius:8px;overflow:hidden}.ai-bar span{display:block;height:100%;background:var(--accent)}.ai-note{font-size:11px;line-height:1.45;color:var(--muted);margin-top:9px}.ai-good{color:var(--good)}.ai-warn{color:var(--warn)}.ai-bad{color:var(--bad)}.ai-axis{fill:var(--muted);font-size:9px}.ai-gridline{stroke:#35404b;stroke-width:.6}.ai-line{fill:none;stroke:currentColor;stroke-width:2;vector-effect:non-scaling-stroke}
+</style>
+<style id="coach-v280-style">
+#coach-v280{background:linear-gradient(180deg,#18202a,#11161c);border:1px solid #33404e;border-radius:18px;padding:16px;margin-bottom:14px}.cv-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.cv-state{display:inline-block;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900}.cv-green{background:#183a2a;color:#79dda3}.cv-yellow{background:#44351b;color:#ffd36e}.cv-red{background:#452326;color:#ff9b9b}.cv-title{font-size:23px;font-weight:900;margin-top:5px}.cv-tags{margin-top:8px}.cv-tag{display:inline-block;padding:5px 8px;border-radius:999px;background:#222a35;font-size:10px;font-weight:800;margin:3px 4px 0 0}.cv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.cv-stat{background:#1b2027;border-radius:12px;padding:10px}.cv-stat span{display:block;font-size:10px;color:#9ca6b3;margin-bottom:3px}.cv-stat strong{font-size:15px}.cv-box{margin-top:10px;padding:11px;border-radius:12px;background:#222a35;font-size:12px;line-height:1.5}.cv-detail{margin-top:10px;background:#151b22;border-radius:12px;padding:11px;font-size:11px;line-height:1.5;color:#9ca6b3}.cv-conflict{margin-top:8px;padding:9px;border-radius:10px;background:#3d2d18;color:#ffd98a;font-size:11px;line-height:1.4}.cv-override{margin-top:8px;padding:9px;border-radius:10px;background:#173a2a;color:#8ee0ad;font-size:11px;line-height:1.4}.cv-error{color:#ff9b9b}
+</style></head>
+<body>
+<div class="app">
+  <div class="top"><div><h1>AthleteOS</h1><small>v3.7 · Optional 4-Day Strength Split</small></div><div class="avatar">AO</div></div>
+
+  <section id="auth">
+    <div class="card">
+      <div class="section-title">AthleteOS account</div>
+      <h2>Sign in</h2>
+      <div class="note" style="margin:6px 0">Your training data stays private to your account.</div>
+      <input id="email" type="email" autocomplete="email" placeholder="Email">
+      <input id="password" type="password" autocomplete="current-password" placeholder="Password">
+      <button id="signin">Sign In</button>
+      <button id="signup" class="secondary">Create Account</button>
+      <div id="auth-status" class="status"></div>
+    </div>
+  </section>
+
+  <section id="main" class="hidden">
+    <section data-page="today">
+      <div class="card">
+        <div class="section-title">Today</div>
+        <div id="today-day" class="note"></div>
+        <div id="today-title" style="font-size:24px;font-weight:900;margin-top:4px"></div>
+        <div id="today-sub" class="note" style="margin-top:6px"></div>
+        <div id="today-pills" style="margin-top:8px"></div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div>
+            <div class="section-title">Apple Health feed</div>
+            <div style="font-size:19px;font-weight:900">Automatic Recovery Data</div>
+          </div>
+          <span class="pill good">CONNECTED</span>
+        </div>
+        <div class="sync-row">
+          <div>
+            <div class="sync-time">Last imported data received</div>
+            <strong id="health-last-sync">Checking…</strong>
+          </div>
+          <button id="refresh-health" class="secondary refresh-btn">↻ Refresh</button>
+        </div>
+        <div id="health-sync-status" class="status"></div>
+        <div class="metric-grid" style="margin-top:12px">
+          <div class="metric"><span class="note">Resting HR</span><strong id="auto-rhr">—</strong><small id="auto-rhr-src"></small><div id="auto-rhr-fresh"></div></div>
+          <div class="metric"><span class="note">HRV</span><strong id="auto-hrv">—</strong><small id="auto-hrv-src"></small><div id="auto-hrv-fresh"></div></div>
+          <div class="metric"><span class="note">Last sleep</span><strong id="auto-sleep">—</strong><small id="auto-sleep-src"></small><div id="auto-sleep-fresh"></div></div>
+          <div class="metric"><span class="note">Steps today</span><strong id="auto-steps">—</strong><small>Apple Health</small><div id="auto-steps-fresh"></div></div>
+        </div>
+        <div class="note" id="auto-health-note" style="margin-top:10px">Waiting for Apple Health data…</div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Morning readiness</div>
+        <div class="note" style="margin-bottom:7px">Apple Health values above are automatic. Enter Garmin-only values here when available.</div>
+        <div class="metric-grid">
+          <div><input id="rd-readiness" type="number" min="0" max="100" placeholder="Garmin readiness"></div>
+          <div><input id="rd-hrv" type="number" placeholder="HRV (ms)"></div>
+          <div><input id="rd-rhr" type="number" placeholder="Resting HR"></div>
+          <div><input id="rd-sleep" type="number" min="0" max="100" placeholder="Sleep score"></div>
+          <div><input id="rd-bb" type="number" min="0" max="100" placeholder="Body Battery"></div>
+          <div><input id="rd-weight" type="number" step=".1" placeholder="Weight (lb)"></div>
+          <div><select id="rd-feel"><option value="">How do you feel?</option><option value="2">Good</option><option value="4">Normal</option><option value="6">Flat / fatigued</option><option value="8">Poor</option></select></div>
+          <div><select id="rd-soreness"><option value="">Soreness</option><option value="1">Low</option><option value="4">Moderate</option><option value="7">High</option><option value="9">Severe</option></select></div>
+        </div>
+        <div class="check-row"><input id="rd-illness" type="checkbox"><label for="rd-illness"><strong>Illness or injury concern</strong><br><span class="note">Use only when symptoms or pain should change today's training.</span></label></div>
+        <button id="save-readiness">Save Readiness</button>
+        <div id="readiness-status" class="status"></div>
+        <div id="readiness-decision" class="readiness-box ready-green">
+          <strong>GREEN — Follow Plan</strong>
+          <div class="note" style="margin-top:4px">No readiness data saved for today yet. AthleteOS will adjust this once you enter your morning metrics.</div>
+        </div>
+      </div>
+
+
+      <div id="unplanned-load-card" class="card hidden">
+        <div class="row">
+          <div>
+            <div class="section-title">Total training load</div>
+            <div style="font-size:19px;font-weight:900">Unplanned Activity Detected</div>
+          </div>
+          <span class="pill" id="unplanned-load-pill">LOAD</span>
+        </div>
+        <div id="unplanned-load-summary" class="note" style="margin-top:8px"></div>
+        <div id="unplanned-load-action" class="hr-callout"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Workout prescription</div>
+        <div id="today-prescription"></div>
+        <button id="jump-log" class="secondary">Open Workout Logger</button>
+      </div>
+      <div id="bike-prescription-card" class="card hidden">
+        <div class="row">
+          <div>
+            <div class="section-title">Bike prescription</div>
+            <div style="font-size:20px;font-weight:900" id="bike-rx-title">—</div>
+          </div>
+          <span class="pill" id="bike-rx-type">Bike</span>
+        </div>
+        <div id="bike-rx-sub" class="note" style="margin-top:5px"></div>
+        <div id="bike-rx-body" class="bike-rx"></div>
+        <div id="bike-rx-reason" class="reason-box"></div>
+      </div>
+      <div id="run-prescription-card" class="card hidden">
+        <div class="row">
+          <div>
+            <div class="section-title">Run prescription</div>
+            <div style="font-size:20px;font-weight:900" id="run-rx-title">—</div>
+          </div>
+          <span class="pill" id="run-rx-type">Run</span>
+        </div>
+        <div id="run-rx-sub" class="note" style="margin-top:5px"></div>
+        <div id="run-rx-body" class="run-rx"></div>
+        <div id="run-rx-reason" class="reason-box"></div>
+      </div>
+
+    </section>
+
+    <section data-page="plan" class="hidden">
+      <div class="card">
+        <div class="section-title">Weekly calendar</div>
+        <h2>Current Structure</h2>
+        <div class="note" style="margin-top:6px">3 runs · 3 strength sessions + 1 optional · 3 rides</div>
+      </div>
+
+      <details open><summary><div class="section-title">Monday</div><div class="row"><div><strong>30-Min Easy Run + Push</strong><div class="note">Chest, shoulders and triceps focus</div></div><span>›</span></div></summary><div class="detail">30-minute easy aerobic run, then Workout A — Push. Bench press stays unpaired as the primary lift; secondary work uses low-interference supersets, with direct arms and core included.</div></details>
+      <details><summary><div class="section-title">Tuesday</div><div class="row"><div><strong>Bike — Quality</strong><div class="note">Threshold / sweet spot / VO₂ by phase</div></div><span>›</span></div></summary><div class="detail">Structured cycling quality session. AthleteOS rotates the exact interval type by training phase and daily readiness.</div></details>
+      <details><summary><div class="section-title">Wednesday</div><div class="row"><div><strong>30-Min Easy Run + Pull</strong><div class="note">Back and posterior-chain focus</div></div><span>›</span></div></summary><div class="detail">30-minute easy aerobic run, then Workout B — Pull. Vertical and horizontal pulling lead the session, with supportive posterior-chain work, direct arms and core.</div></details>
+      <details><summary><div class="section-title">Thursday</div><div class="row"><div><strong>Bike — Quality</strong><div class="note">Aerobic power / FTP development</div></div><span>›</span></div></summary><div class="detail">Second focused cycling session. Intensity progresses with the block and can pivot down when readiness is suppressed.</div></details>
+      <details><summary><div class="section-title">Friday</div><div class="row"><div><strong>30-Min Easy Run + Legs</strong><div class="note">Strength, durability and low-volume power</div></div><span>›</span></div></summary><div class="detail">30-minute easy run, then Workout C — Legs. Low-volume jumps precede the unpaired squat; unilateral, hamstring and lower-leg work support cycling and off-bike running durability.</div></details>
+      <details><summary><div class="section-title">Saturday</div><div class="row"><div><strong>Long Bike — Zone 2</strong><div class="note">Primary endurance ride</div></div><span>›</span></div></summary><div class="detail">Progressive long aerobic ride. Durability and 70.3 race-power work are layered in later phases.</div></details>
+      <details><summary><div class="section-title">Sunday</div><div class="row"><div><strong>Recovery / Optional Full Body</strong><div class="note">Recovery remains the default</div></div><span>›</span></div></summary><div class="detail">Choose Workout D only on a GREEN readiness day with low residual leg fatigue. Otherwise use walking and mobility to absorb the week; the optional lift should never displace a key endurance session.</div></details>
+
+      <div class="card">
+        <div class="row">
+          <div>
+            <div class="section-title">Training resources</div>
+            <h3>Workout Library</h3>
+            <div class="note" style="margin-top:5px">Browse all FTP-scaled bike and Critical-Speed-scaled run sessions without cluttering the weekly plan.</div>
+          </div>
+          <span class="pill">55 sessions</span>
+        </div>
+        <button id="open-workout-library" class="secondary">Open Workout Library</button>
+      </div>
+
+    </section>
+
+
+    <section data-page="library" class="hidden">
+      <div class="card">
+        <div class="row">
+          <div>
+            <div class="section-title">Training resources</div>
+            <h2>Workout Library</h2>
+            <div class="note" style="margin-top:5px">Reference library only. AthleteOS still selects the appropriate workout automatically from your phase, readiness and progression.</div>
+          </div>
+          <span class="pill">55 workouts</span>
+        </div>
+        <button id="close-workout-library" class="secondary">← Back to Plan</button>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div><div class="section-title">Bike workout library</div><h3>FTP-Scaled Sessions</h3></div>
+          <span class="pill" id="bike-library-count">0 workouts</span>
+        </div>
+        <div class="note" style="margin-top:5px">Every target is stored as %FTP, so changing FTP automatically updates all prescribed watts.</div>
+        <div class="library-toolbar">
+          <select id="bike-library-filter">
+            <option value="all">All types</option>
+            <option value="endurance">Endurance</option>
+            <option value="tempo">Tempo</option>
+            <option value="sweetspot">Sweet Spot</option>
+            <option value="threshold">Threshold</option>
+            <option value="overunder">Over / Under</option>
+            <option value="vo2">VO₂max</option>
+            <option value="micro">Micro intervals</option>
+            <option value="torque">Low cadence / torque</option>
+            <option value="race">70.3 race power</option>
+            <option value="durability">Durability</option>
+            <option value="recovery">Recovery</option>
+          </select>
+          <select id="bike-library-duration">
+            <option value="all">Any duration</option>
+            <option value="short">≤ 60 min</option>
+            <option value="medium">61–90 min</option>
+            <option value="long">90+ min</option>
+          </select>
+        </div>
+        <div id="bike-library-list"></div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div><div class="section-title">Run workout library</div><h3>Critical-Speed Scaled Sessions</h3></div>
+          <span class="pill" id="run-library-count">0 workouts</span>
+        </div>
+        <div class="note" style="margin-top:5px">Pace targets scale from Critical Speed (CS). Easy and recovery running remains effort/HR constrained so AthleteOS does not force an artificially fast easy pace.</div>
+        <div class="library-toolbar">
+          <select id="run-library-filter">
+            <option value="all">All types</option>
+            <option value="recovery">Recovery</option>
+            <option value="easy">Easy aerobic</option>
+            <option value="strides">Strides / economy</option>
+            <option value="hills">Hills</option>
+            <option value="steady">Steady / progression</option>
+            <option value="threshold">Threshold</option>
+            <option value="vo2">VO₂ / aerobic power</option>
+            <option value="speed">Speed</option>
+            <option value="long">Long run</option>
+            <option value="durability">Durability</option>
+            <option value="brick">Brick / 70.3</option>
+          </select>
+          <select id="run-library-duration">
+            <option value="all">Any duration</option>
+            <option value="short">≤ 40 min</option>
+            <option value="medium">41–70 min</option>
+            <option value="long">70+ min</option>
+          </select>
+        </div>
+        <div id="run-library-list"></div>
+      </div>
+    </section>
+
+    <section data-page="log" class="hidden">
+      <div class="card">
+        <div class="section-title">Log workout</div>
+        <div class="choice">
+          <button class="secondary sport-btn" data-sport="run">Run</button>
+          <button class="secondary sport-btn" data-sport="bike">Bike</button>
+          <button class="secondary sport-btn" data-sport="strength">Strength</button>
+          <button class="secondary sport-btn" data-sport="other">Other Activity</button>
+        </div>
+
+        <div id="run-form">
+          <h3>Run</h3>
+          <input id="run-name" value="Easy Run" placeholder="Workout name">
+          <input id="run-duration" type="number" placeholder="Duration (minutes)">
+          <input id="run-distance" type="number" step=".01" placeholder="Distance (km)">
+          <input id="run-hr" type="number" placeholder="Average HR (bpm)">
+          <input id="run-pace" placeholder="Average pace (mm:ss /km)">
+          <input id="run-cadence" type="number" placeholder="Average cadence (spm)">
+          <input id="run-elev" type="number" step=".1" placeholder="Elevation gain (m)">
+          <input id="run-rpe" type="number" min="1" max="10" placeholder="RPE 1–10">
+          <button id="save-run">Save Run</button>
+        </div>
+
+        <div id="bike-form" class="hidden">
+          <h3>Bike</h3>
+          <input id="bike-name" value="Bike Ride" placeholder="Workout name">
+          <input id="bike-duration" type="number" placeholder="Duration (minutes)">
+          <input id="bike-distance" type="number" step=".01" placeholder="Distance (km)">
+          <input id="bike-hr" type="number" placeholder="Average HR (bpm)">
+          <input id="bike-power" type="number" placeholder="Average power (W)">
+          <input id="bike-np" type="number" placeholder="Normalized power (W)">
+          <input id="bike-cadence" type="number" step=".1" placeholder="Average cadence (rpm)">
+          <input id="bike-elev" type="number" step=".1" placeholder="Elevation gain (m)">
+          <input id="bike-rpe" type="number" min="1" max="10" placeholder="RPE 1–10">
+          <button id="save-bike">Save Bike</button>
+        </div>
+
+        
+        
+        <div id="other-form" class="hidden">
+          <h3>Other Activity</h3>
+          <div class="note">Log sport, recreation, work or cross-training that was not part of the AthleteOS prescription. It still counts toward total training load.</div>
+          <select id="other-category">
+            <option value="sport_recreation">Sport / Recreation</option>
+            <option value="walk_hike">Walk / Hike</option>
+            <option value="mobility">Mobility / Yoga</option>
+            <option value="cross_training">Cardio / Cross-training</option>
+            <option value="manual_labour">Manual Labour</option>
+            <option value="other">Other</option>
+          </select>
+          <input id="other-name" placeholder="Activity name — e.g. Slow Pitch">
+          <input id="other-duration" type="number" placeholder="Duration (minutes)">
+          <div class="grid2">
+            <input id="other-hr" type="number" placeholder="Average HR">
+            <input id="other-maxhr" type="number" placeholder="Max HR">
+          </div>
+          <div class="grid2">
+            <input id="other-calories" type="number" placeholder="Calories">
+            <input id="other-rpe" type="number" min="1" max="10" placeholder="RPE 1–10">
+          </div>
+          <select id="other-muscular-load">
+            <option value="low">Muscular load — Low</option>
+            <option value="moderate">Muscular load — Moderate</option>
+            <option value="high">Muscular load — High</option>
+          </select>
+          <textarea id="other-notes" placeholder="Optional notes — sprinting, soreness, tournament, heavy lifting, etc."></textarea>
+          <button id="save-other">Save Other Activity</button>
+        </div>
+
+<div id="strength-form" class="hidden">
+          <div class="row">
+            <div>
+              <h3 id="strength-form-title">Strength</h3>
+              <div class="note" id="strength-form-note">Choose the prescribed strength session or select one manually.</div>
+            </div>
+            <span class="pill" id="strength-session-pill">A</span>
+          </div>
+
+          <select id="strength-session-select">
+            <option value="A">Workout A — Push Focus</option>
+            <option value="B">Workout B — Pull Focus</option>
+            <option value="C">Workout C — Legs</option>
+            <option value="D">Workout D — Full Body (Optional)</option>
+          </select>
+
+          <div id="strength-A" class="strength-session">
+            <div class="exercise" data-exercise="trap-bar-deadlift">
+              <h4>Trap-Bar Deadlift</h4><div class="note">Target: 3 × 5 @ 175 lb</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="A-tb-w1" value="175"><input id="A-tb-r1" value="5"><input id="A-tb-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="A-tb-w2" value="175"><input id="A-tb-r2" value="5"><input id="A-tb-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="A-tb-w3" value="175"><input id="A-tb-r3" value="5"><input id="A-tb-e3" placeholder="RPE"></div>
+            </div>
+            <div class="exercise" data-exercise="bulgarian-split-squat">
+              <h4>Bulgarian Split Squat</h4><div class="note">3 × 8 / leg</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="A-bs-w1" placeholder="lb"><input id="A-bs-r1" value="8"><input id="A-bs-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="A-bs-w2" placeholder="lb"><input id="A-bs-r2" value="8"><input id="A-bs-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="A-bs-w3" placeholder="lb"><input id="A-bs-r3" value="8"><input id="A-bs-e3" placeholder="RPE"></div>
+            </div>
+            <div class="exercise" data-exercise="bench-press">
+              <h4>Bench Press</h4><div class="note">3 × 6</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="A-bp-w1" placeholder="lb"><input id="A-bp-r1" value="6"><input id="A-bp-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="A-bp-w2" placeholder="lb"><input id="A-bp-r2" value="6"><input id="A-bp-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="A-bp-w3" placeholder="lb"><input id="A-bp-r3" value="6"><input id="A-bp-e3" placeholder="RPE"></div>
+            </div>
+            <div class="exercise" data-exercise="seated-cable-row">
+              <h4>Seated Cable Row</h4><div class="note">3 × 8</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="A-cr-w1" placeholder="lb"><input id="A-cr-r1" value="8"><input id="A-cr-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="A-cr-w2" placeholder="lb"><input id="A-cr-r2" value="8"><input id="A-cr-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="A-cr-w3" placeholder="lb"><input id="A-cr-r3" value="8"><input id="A-cr-e3" placeholder="RPE"></div>
+            </div>
+          </div>
+
+          <div id="strength-B" class="strength-session hidden">
+            <div class="exercise" data-exercise="romanian-deadlift">
+              <h4>Romanian Deadlift</h4><div class="note">3 × 6</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="B-rdl-w1" placeholder="lb"><input id="B-rdl-r1" value="6"><input id="B-rdl-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="B-rdl-w2" placeholder="lb"><input id="B-rdl-r2" value="6"><input id="B-rdl-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="B-rdl-w3" placeholder="lb"><input id="B-rdl-r2b" value="6"><input id="B-rdl-e3" placeholder="RPE"></div>
+            </div>
+            <div class="exercise" data-exercise="rear-foot-elevated-split-squat">
+              <h4>Rear-Foot Elevated Split Squat</h4><div class="note">3 × 8 / leg</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="B-rfess-w1" placeholder="lb"><input id="B-rfess-r1" value="8"><input id="B-rfess-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="B-rfess-w2" placeholder="lb"><input id="B-rfess-r2" value="8"><input id="B-rfess-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="B-rfess-w3" placeholder="lb"><input id="B-rfess-r3" value="8"><input id="B-rfess-e3" placeholder="RPE"></div>
+            </div>
+            <div class="exercise" data-exercise="standing-calf-raise">
+              <h4>Standing Calf Raise</h4><div class="note">3 × 10–12</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="B-calf-w1" placeholder="lb"><input id="B-calf-r1" value="10"><input id="B-calf-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="B-calf-w2" placeholder="lb"><input id="B-calf-r2" value="10"><input id="B-calf-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="B-calf-w3" placeholder="lb"><input id="B-calf-r3" value="10"><input id="B-calf-e3" placeholder="RPE"></div>
+            </div>
+            <div class="exercise" data-exercise="soleus-raise">
+              <h4>Soleus Raise</h4><div class="note">3 × 12–15</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="B-sol-w1" placeholder="lb"><input id="B-sol-r1" value="12"><input id="B-sol-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="B-sol-w2" placeholder="lb"><input id="B-sol-r2" value="12"><input id="B-sol-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="B-sol-w3" placeholder="lb"><input id="B-sol-r3" value="12"><input id="B-sol-e3" placeholder="RPE"></div>
+            </div>
+            <div id="strength-B-plyo" class="exercise">
+              <h4>Plyometrics</h4><div class="note">Low volume only when readiness is GREEN/YELLOW. Suppressed automatically on RED days.</div>
+              <div class="entry-sub">Pogo jumps 2 × 20 · Snap-down to stick 2 × 5</div>
+            </div>
+          </div>
+
+          <div id="strength-C" class="strength-session hidden">
+            <div class="exercise" data-exercise="overhead-press">
+              <h4>Overhead Press</h4><div class="note">3 × 6</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="C-ohp-w1" placeholder="lb"><input id="C-ohp-r1" value="6"><input id="C-ohp-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="C-ohp-w2" placeholder="lb"><input id="C-ohp-r2" value="6"><input id="C-ohp-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="C-ohp-w3" placeholder="lb"><input id="C-ohp-r3" value="6"><input id="C-ohp-e3" placeholder="RPE"></div>
+            </div>
+            <div class="exercise" data-exercise="pull-down">
+              <h4>Lat Pulldown / Pull-Up</h4><div class="note">3 × 8</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="C-pd-w1" placeholder="lb"><input id="C-pd-r1" value="8"><input id="C-pd-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="C-pd-w2" placeholder="lb"><input id="C-pd-r2" value="8"><input id="C-pd-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="C-pd-w3" placeholder="lb"><input id="C-pd-r3" value="8"><input id="C-pd-e3" placeholder="RPE"></div>
+            </div>
+            <div class="exercise" data-exercise="incline-dumbbell-press">
+              <h4>Incline Dumbbell Press</h4><div class="note">3 × 8</div>
+              <div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span></div>
+              <div class="set-row"><span>1</span><input id="C-idp-w1" placeholder="lb"><input id="C-idp-r1" value="8"><input id="C-idp-e1" placeholder="RPE"></div>
+              <div class="set-row"><span>2</span><input id="C-idp-w2" placeholder="lb"><input id="C-idp-r2" value="8"><input id="C-idp-e2" placeholder="RPE"></div>
+              <div class="set-row"><span>3</span><input id="C-idp-w3" placeholder="lb"><input id="C-idp-r3" value="8"><input id="C-idp-e3" placeholder="RPE"></div>
+            </div>
+            <div class="exercise" data-exercise="pallof-press">
+              <h4>Pallof Press</h4><div class="note">3 × 10 / side</div>
+              <div class="entry-sub">Record load/RPE in notes for now.</div>
+            </div>
+          </div>
+
+          <button id="save-strength">Save Strength Session</button>
+          <div class="note" style="margin-top:8px">The next occurrence will use the saved session to inform progression.</div>
+        </div>
+
+        <div id="save-status" class="status"></div>
+
+      </div>
+    </section>
+
+    <section data-page="history" class="hidden">
+      <div class="card">
+        <div class="section-title">Workout history</div>
+        <div class="note" style="margin-bottom:10px">Imported and manual activities are compared for likely duplicates. Swipe left on an activity or use Delete to remove it.</div>
+        <div id="history-list"><div class="note">Loading…</div></div>
+      </div>
+      <div class="card">
+        <div class="section-title">Strength history</div>
+        <div id="strength-history"><div class="note">Loading…</div></div>
+      </div>
+    </section>
+
+    <section data-page="progress" class="hidden">
+      <div class="card">
+        <div class="row">
+          <div><div class="section-title">Performance dashboard</div><h2>Current Position</h2></div>
+          <span class="pill">HR Intelligence</span>
+        </div>
+        <div class="note">Capacity tells us what you can produce. Heart-rate response tells us what that output is costing physiologically.</div>
+        <div class="hr-kpi-grid">
+          <div class="hr-kpi"><span>Cycling FTP</span><strong id="dash-ftp">—</strong><div class="hr-trend" id="dash-ftp-trend">Current anchor</div></div>
+          <div class="hr-kpi"><span>Critical Speed</span><strong id="dash-cs">—</strong><div class="hr-trend">Running anchor</div></div>
+          <div class="hr-kpi"><span>Run aerobic limit</span><strong id="dash-run-ae">Testing</strong><div class="hr-trend" id="dash-run-drift">60-min drift benchmark</div></div>
+          <div class="hr-kpi"><span>Bike aerobic limit</span><strong id="dash-bike-ae">Testing</strong><div class="hr-trend" id="dash-bike-drift">Trainer drift benchmark</div></div>
+          <div class="hr-kpi"><span>Resting HR</span><strong id="dash-rhr">—</strong><div class="hr-trend">Latest recovery data</div></div>
+          <div class="hr-kpi"><span>HRV</span><strong id="dash-hrv">—</strong><div class="hr-trend">Latest recovery data</div></div>
+          <div class="hr-kpi"><span>Run durability</span><strong id="dash-run-dur">Building</strong><div class="hr-trend">Late-run cardiac efficiency</div></div>
+          <div class="hr-kpi"><span>Bike durability</span><strong id="dash-bike-dur">Building</strong><div class="hr-trend">Late-ride cardiac efficiency</div></div>
+        </div>
+        <div class="hr-callout" id="hr-intelligence-summary"><strong>Heart-rate intelligence:</strong><br>Complete standardized aerobic tests to establish your personal HR-to-output baseline.</div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Monthly benchmarks</div>
+        <h3>Aerobic Limits + Capacity</h3>
+        <div class="note">Benchmark sessions replace normal quality work; they are not added on top of the week.</div>
+        <div class="benchmark">
+          <div class="row"><div><strong>Run aerobic drift</strong><div class="entry-sub">Treadmill · fixed speed/grade · 60-min test segment</div></div><span class="pill">Monthly</span></div>
+          <div class="entry-sub" style="margin-top:7px">Pass target: <strong>&lt;5% decoupling</strong>. Pass → cautiously progress test speed next month. Excess drift → hold/reduce.</div>
+          <button class="secondary benchmark-log" data-test="run_drift">Log Run Drift Test</button>
+        </div>
+        <div class="benchmark">
+          <div class="row"><div><strong>Bike aerobic drift</strong><div class="entry-sub">Trainer · fixed watts · 60-min steady segment</div></div><span class="pill">Monthly</span></div>
+          <div class="entry-sub" style="margin-top:7px">Track watts-to-HR efficiency and late-session cardiac drift.</div>
+          <button class="secondary benchmark-log" data-test="bike_drift">Log Bike Drift Test</button>
+        </div>
+        <div class="benchmark">
+          <div class="row"><div><strong>FTP benchmark</strong><div class="entry-sub">Formal test or threshold confirmation depending on fatigue/block</div></div><span class="pill">Monthly check</span></div>
+          <button class="secondary benchmark-log" data-test="ftp">Log FTP Benchmark</button>
+        </div>
+        <div class="benchmark">
+          <div class="row"><div><strong>Critical Speed assessment</strong><div class="entry-sub">Formal assessment every ~6–8 weeks or update from strong performance</div></div><span class="pill">6–8 wk</span></div>
+          <button class="secondary benchmark-log" data-test="cs">Log CS Benchmark</button>
+        </div>
+      </div>
+
+      <div class="card hidden" id="benchmark-entry-card">
+        <div class="row"><div><div class="section-title">Benchmark result</div><h3 id="benchmark-entry-title">Test</h3></div><button id="close-benchmark" class="secondary" style="width:auto;margin:0">Close</button></div>
+        <input id="benchmark-date" type="date">
+        <div class="grid2">
+          <input id="benchmark-output" type="number" step="0.01" placeholder="Pace sec/km or watts">
+          <input id="benchmark-hr1" type="number" placeholder="First-half avg HR">
+        </div>
+        <div class="grid2">
+          <input id="benchmark-hr2" type="number" placeholder="Second-half avg HR">
+          <input id="benchmark-result" type="number" step="0.01" placeholder="FTP W / CS sec/km">
+        </div>
+        <div id="benchmark-preview" class="hr-callout">Enter first- and second-half HR to calculate simple HR drift.</div>
+        <button id="save-benchmark">Save Benchmark</button>
+        <div id="benchmark-status" class="status"></div>
+      </div>
+
+      
+      <div class="card">
+        <div class="section-title">Running Critical Speed</div>
+        <div class="cs-card">
+          <div>
+            <div class="note">CS is the running anchor, analogous to cycling FTP. Enter a current CS pace or use a recent 5K estimate until AthleteOS has enough run history to estimate it automatically.</div>
+            <input id="cs-pace" placeholder="Critical Speed pace (mm:ss /km)">
+          </div>
+          <button id="save-cs" style="margin:0">Save CS</button>
+        </div>
+        <div id="cs-status" class="status"></div>
+      </div>
+      <div class="card">
+        <div class="section-title">Run durability</div>
+        <div class="note">AthleteOS compares early vs late pace and heart-rate response on sufficiently long steady runs. Lower drift/fade is better. Detailed split-based scoring will activate as synchronized activity streams become available.</div>
+        <div class="durability-grid">
+          <div class="durability-metric"><span>Recent long runs</span><strong id="dur-long-count">—</strong></div>
+          <div class="durability-metric"><span>Longest recent run</span><strong id="dur-longest">—</strong></div>
+          <div class="durability-metric"><span>Consistency</span><strong id="dur-consistency">—</strong></div>
+          <div class="durability-metric"><span>Durability score</span><strong id="dur-score">Building</strong></div>
+        </div>
+      </div>
+<div class="card">
+        <div class="section-title">Cycling FTP</div>
+        <div class="ftp-card">
+          <div>
+            <div class="note">One FTP value scales every bike workout automatically.</div>
+            <input id="ftp-watts" type="number" min="50" max="600" placeholder="FTP watts">
+          </div>
+          <button id="save-ftp" style="margin:0">Save FTP</button>
+        </div>
+        <div id="ftp-status" class="status"></div>
+      </div>
+      <div class="card">
+        <div class="section-title">Current phase</div>
+        <h2>Transition → Foundation</h2>
+        <div class="note" style="margin-top:6px">Foundation block begins September 1, 2026.</div>
+        <div class="progress-line"><span style="width:18%"></span></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><span class="note">Activities</span><strong id="activity-count">0</strong></div>
+        <div class="metric"><span class="note">Strength sessions</span><strong id="strength-count">0</strong></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <div class="section-title">9-month direction</div>
+        <div class="entry"><div class="entry-title">Sep–Oct · Foundation</div><div class="entry-sub">Consistency, FTP development, strength progression, aerobic base.</div></div>
+        <div class="entry"><div class="entry-title">Nov–Jan · Build</div><div class="entry-sub">More threshold/VO₂ work, durability and progressive long rides.</div></div>
+        <div class="entry"><div class="entry-title">Feb–Apr · Race Specific</div><div class="entry-sub">70.3 race power, bricks, long-run durability and specificity.</div></div>
+        <div class="entry"><div class="entry-title">May · Peak / Taper</div><div class="entry-sub">Reduce fatigue while preserving race-specific fitness.</div></div>
+      </div>
+      <div class="card">
+        <div class="section-title">Recovery trend · recent</div>
+        <div class="metric-grid">
+          <div class="metric"><span class="note">Avg resting HR</span><strong id="trend-rhr">—</strong></div>
+          <div class="metric"><span class="note">Avg sleep</span><strong id="trend-sleep">—</strong></div>
+          <div class="metric"><span class="note">Avg HRV</span><strong id="trend-hrv">—</strong></div>
+          <div class="metric"><span class="note">7-day rides</span><strong id="trend-bike">—</strong></div>
+        </div>
+        <div id="trend-note" class="note" style="margin-top:10px">Building your baseline as Apple Health syncs.</div>
+      </div>
+
+
+      <div class="card strava-card">
+        <div class="row">
+          <div>
+            <div class="section-title">Activity import</div>
+            <h3>Strava</h3>
+          </div>
+          <span class="pill" id="strava-pill">CHECKING</span>
+        </div>
+        <div class="note" id="strava-status-text" style="margin-top:7px">Checking your Strava connection…</div>
+        <div class="integration-status" id="strava-last-sync"></div>
+        <button id="connect-strava" class="strava-btn">Connect Strava</button>
+        <button id="sync-strava" class="secondary hidden">↻ Sync Strava Now</button>
+        <div id="strava-action-status" class="status"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Integrations</div>
+        <div class="entry"><div class="entry-title">Supabase</div><div class="entry-sub good">Connected · live database</div></div>
+        <div class="entry">
+          <div class="entry-title">Strava</div>
+          <div class="entry-sub" id="strava-integration-line">Checking connection…</div>
+        </div>
+        <div class="entry"><div class="entry-title">Garmin</div><div class="entry-sub warn">Pending developer access</div></div>
+      </div>
+      <button id="signout" class="danger">Sign Out</button>
+    </section>
+  </section>
+</div>
+
+<nav id="tabs" class="tabs hidden">
+  <div class="tab active" data-target="today"><b>⌂</b>Today</div>
+  <div class="tab" data-target="plan"><b>▦</b>Plan</div>
+  <div class="tab" data-target="log"><b>＋</b>Log</div>
+  <div class="tab" data-target="history"><b>☷</b>History</div>
+  <div class="tab" data-target="progress"><b>↗</b>Progress</div>
+</nav>
+
+<script type="module">
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const supabase=createClient("https://austsxdtggtoyrjpwjbj.supabase.co","sb_publishable_ipEuuZhqgPbL-G1MbLvzgQ_UmKWOngO");
+const $=id=>document.getElementById(id); let currentUser=null;
+const schedule={
+  0:["Recovery / Optional Full Body","Recovery remains the default","Recovery","Optional Strength","Choose Workout D only with GREEN readiness and low residual leg fatigue; otherwise walk and do mobility."],
+  1:["30-Min Easy Run + Push","Chest, shoulders and triceps focus","Run","Strength","Run 30 min easy aerobic. Then Workout A — Push with protected primary pressing, balanced back work, direct arms and core."],
+  2:["Bike — Quality Session","Threshold / sweet spot / VO₂ by phase","Bike","Quality","Structured cycling quality session. Exact intervals adapt to training phase and readiness."],
+  3:["30-Min Easy Run + Pull","Back and posterior-chain focus","Run","Strength","Run 30 min easy. Then Workout B — Pull with vertical and horizontal pulling, posterior-chain support, direct arms and core."],
+  4:["Bike — Quality Session","Aerobic power / FTP development","Bike","Quality","Second focused cycling day. Intensity can be modified down if readiness is suppressed."],
+  5:["30-Min Easy Run + Legs","Strength, durability and low-volume power","Run","Strength","Run 30 min easy. Then Workout C — Legs with jumps, protected squats, unilateral work, hamstrings, calves, arms and core."],
+  6:["Long Bike — Zone 2","Primary weekly endurance ride","Bike","Long","Progressive long Zone 2 ride. Duration and 70.3 race-specific work build later."]
+};
+
+
+const RUN_LIBRARY=[
+ {id:"rec20",name:"Recovery Run 20",type:"recovery",level:1,minutes:20,phases:["transition","foundation","build","specific"],steps:[["Easy",20,0.68,0.76]],desc:"Very easy circulation run. Conversational effort; pace is a ceiling, not a target."},
+ {id:"rec30",name:"Recovery Run 30",type:"recovery",level:1,minutes:30,phases:["transition","foundation","build","specific"],steps:[["Easy",30,0.68,0.77]],desc:"Low-stress aerobic running for frequency and tissue tolerance."},
+ {id:"easy30",name:"Easy Aerobic 30",type:"easy",level:1,minutes:30,phases:["transition","foundation","build","specific"],steps:[["Easy",30,0.72,0.82]],desc:"Foundational aerobic volume at relaxed conversational effort."},
+ {id:"easy40",name:"Easy Aerobic 40",type:"easy",level:1,minutes:40,phases:["foundation","build","specific"],steps:[["Easy",40,0.72,0.82]],desc:"Build frequency and aerobic volume without adding much intensity."},
+ {id:"easy50",name:"Easy Aerobic 50",type:"easy",level:2,minutes:50,phases:["foundation","build"],steps:[["Easy",50,0.72,0.83]],desc:"Moderate-duration easy run for aerobic development."},
+ {id:"str4",name:"Easy + 4 × 20s Strides",type:"strides",level:1,minutes:35,phases:["transition","foundation"],steps:[["Easy",28,0.72,0.82],["4 × 20s strides",2,1.05,1.15],["Easy between/after",5,0.68,0.78]],desc:"Neuromuscular speed and running economy with very little metabolic load."},
+ {id:"str6",name:"Easy + 6 × 20s Strides",type:"strides",level:2,minutes:40,phases:["foundation","build"],steps:[["Easy",30,0.72,0.82],["6 × 20s strides",2,1.05,1.15],["Easy recovery",8,0.68,0.78]],desc:"Maintain leg speed while most training stays aerobic."},
+ {id:"hill8",name:"8 × 30s Hill Power",type:"hills",level:1,minutes:40,phases:["foundation","build"],steps:[["Warm-up",15,0.72,0.82],["8 × 30s hill",4,1.05,1.15],["Jog recoveries",11,0.65,0.76],["Cool-down",10,0.68,0.78]],desc:"Short uphill power with controlled mechanics and low total fast-running volume."},
+ {id:"hill10",name:"10 × 45s Hills",type:"hills",level:2,minutes:48,phases:["foundation","build"],steps:[["Warm-up",15,0.72,0.82],["10 × 45s hill",8,1.00,1.10],["Jog recoveries",15,0.65,0.76],["Cool-down",10,0.68,0.78]],desc:"Strength-endurance and aerobic power on an incline."},
+ {id:"steady45",name:"Steady Aerobic 45",type:"steady",level:1,minutes:45,phases:["foundation","build"],steps:[["Warm-up",10,0.72,0.80],["Steady",25,0.83,0.90],["Cool-down",10,0.68,0.78]],desc:"Controlled moderate work below threshold."},
+ {id:"prog45",name:"Progression Run 45",type:"steady",level:2,minutes:45,phases:["foundation","build"],steps:[["Easy",15,0.72,0.80],["Steady",15,0.82,0.88],["Controlled strong",10,0.90,0.95],["Cool-down",5,0.68,0.76]],desc:"Practice finishing faster without turning the session into a race."},
+ {id:"thr4x5",name:"Threshold 4 × 5",type:"threshold",level:1,minutes:50,phases:["foundation","build"],steps:[["Warm-up",12,0.72,0.82],["4 × 5 min",20,0.94,0.99],["Jog recoveries",8,0.65,0.75],["Cool-down",10,0.68,0.78]],desc:"Entry threshold intervals with repeatable quality."},
+ {id:"thr3x8",name:"Threshold 3 × 8",type:"threshold",level:2,minutes:52,phases:["foundation","build"],steps:[["Warm-up",12,0.72,0.82],["3 × 8 min",24,0.95,1.00],["Jog recoveries",6,0.65,0.75],["Cool-down",10,0.68,0.78]],desc:"High-value threshold development with manageable recovery."},
+ {id:"thr3x10",name:"Threshold 3 × 10",type:"threshold",level:3,minutes:60,phases:["build","specific"],steps:[["Warm-up",14,0.72,0.82],["3 × 10 min",30,0.95,1.00],["Jog recoveries",6,0.65,0.75],["Cool-down",10,0.68,0.78]],desc:"Progress threshold time-in-zone."},
+ {id:"thr2x15",name:"Threshold 2 × 15",type:"threshold",level:3,minutes:58,phases:["build","specific"],steps:[["Warm-up",13,0.72,0.82],["2 × 15 min",30,0.95,1.00],["Jog recovery",5,0.65,0.75],["Cool-down",10,0.68,0.78]],desc:"Long sustained threshold intervals."},
+ {id:"tempo20",name:"Continuous Tempo 20",type:"threshold",level:2,minutes:45,phases:["foundation","build"],steps:[["Warm-up",15,0.72,0.82],["Tempo",20,0.92,0.97],["Cool-down",10,0.68,0.78]],desc:"Continuous controlled tempo below all-out effort."},
+ {id:"vo2_5x3",name:"Aerobic Power 5 × 3",type:"vo2",level:2,minutes:50,phases:["build"],steps:[["Warm-up",15,0.72,0.82],["5 × 3 min",15,1.03,1.09],["Jog recoveries",10,0.65,0.75],["Cool-down",10,0.68,0.78]],desc:"Aerobic-power intervals above CS with enough recovery to preserve mechanics."},
+ {id:"vo2_4x4",name:"Aerobic Power 4 × 4",type:"vo2",level:3,minutes:52,phases:["build","specific"],steps:[["Warm-up",15,0.72,0.82],["4 × 4 min",16,1.02,1.08],["Jog recoveries",11,0.65,0.75],["Cool-down",10,0.68,0.78]],desc:"Longer high-aerobic intervals for speed endurance."},
+ {id:"speed8x200",name:"8 × 200m Fast Relaxed",type:"speed",level:1,minutes:42,phases:["foundation","build"],steps:[["Warm-up",15,0.72,0.82],["8 × 200m",6,1.10,1.20],["Easy jog",11,0.65,0.75],["Cool-down",10,0.68,0.78]],desc:"Economy and mechanics; fast but relaxed, never sprinting to failure."},
+ {id:"speed8x400",name:"8 × 400m",type:"speed",level:2,minutes:50,phases:["build"],steps:[["Warm-up",15,0.72,0.82],["8 × 400m",13,1.05,1.12],["Jog recoveries",12,0.65,0.75],["Cool-down",10,0.68,0.78]],desc:"Controlled repetition work for speed and aerobic power."},
+ {id:"long60",name:"Long Easy 60",type:"long",level:1,minutes:60,phases:["foundation"],steps:[["Long easy",60,0.72,0.82]],desc:"First durability anchor: easy, controlled and repeatable."},
+ {id:"long75",name:"Long Easy 75",type:"long",level:2,minutes:75,phases:["foundation","build"],steps:[["Long easy",75,0.72,0.82]],desc:"Extend aerobic duration while protecting quality elsewhere in the week."},
+ {id:"long90",name:"Long Easy 90",type:"long",level:3,minutes:90,phases:["build","specific"],steps:[["Long easy",90,0.72,0.82]],desc:"Durability-focused long run once shorter long runs are well tolerated."},
+ {id:"dur75",name:"Long 75 + Steady Finish",type:"durability",level:3,minutes:75,phases:["build","specific"],steps:[["Easy",55,0.72,0.82],["Steady finish",15,0.84,0.90],["Cool-down",5,0.68,0.76]],desc:"Train the ability to preserve pace and mechanics late in a run."},
+ {id:"dur90",name:"Long 90 + Race-Effort Finish",type:"durability",level:4,minutes:90,phases:["specific"],steps:[["Easy",65,0.72,0.82],["70.3 effort",20,0.84,0.91],["Cool-down",5,0.68,0.76]],desc:"Race-specific durability after substantial aerobic work."},
+ {id:"brick20",name:"Brick Run 20",type:"brick",level:1,minutes:20,phases:["foundation","build","specific"],steps:[["Settle",5,0.75,0.82],["Controlled",15,0.82,0.90]],desc:"Short transition run focused on cadence, posture and control."},
+ {id:"brick30",name:"Brick Run 30",type:"brick",level:2,minutes:30,phases:["build","specific"],steps:[["Settle",5,0.75,0.82],["70.3 effort",20,0.84,0.91],["Easy",5,0.68,0.76]],desc:"Specific bike-to-run conditioning without racing the brick."},
+ {id:"brick45",name:"Race-Specific Brick 45",type:"brick",level:3,minutes:45,phases:["specific"],steps:[["Settle",8,0.75,0.82],["70.3 effort",30,0.85,0.92],["Easy",7,0.68,0.76]],desc:"Longer race-specific transition work used selectively."}
+];
+
+let currentCS=300; // seconds/km; conservative 5:00/km default until saved/estimated
+
+function paceFmt(sec){
+  sec=Math.max(1,Math.round(sec));
+  return `${Math.floor(sec/60)}:${String(sec%60).padStart(2,"0")}/km`;
+}
+function paceFromCS(mult){
+  // Speed fraction -> pace is inverse.
+  return currentCS/Math.max(.01,mult);
+}
+function paceRange(lo,hi){
+  // hi speed is faster (lower pace), so display fast–slow.
+  return `${paceFmt(paceFromCS(hi))}–${paceFmt(paceFromCS(lo))}`;
+}
+function renderRunLibrary(){
+  const type=$("run-library-filter")?.value||"all";
+  const dur=$("run-library-duration")?.value||"all";
+  let rows=RUN_LIBRARY.filter(w=>type==="all"||w.type===type);
+  rows=rows.filter(w=>dur==="all"||(dur==="short"&&w.minutes<=40)||(dur==="medium"&&w.minutes>40&&w.minutes<=70)||(dur==="long"&&w.minutes>70));
+  if($("run-library-count")) $("run-library-count").textContent=`${rows.length} workouts`;
+  if(!$("run-library-list")) return;
+  $("run-library-list").innerHTML=rows.map(w=>`<div class="library-item">
+    <div class="row"><div><strong>${w.name}</strong><div class="entry-sub">${w.desc}</div></div><span class="pill">${w.minutes} min</span></div>
+    <div class="entry-sub" style="margin-top:7px">${w.steps.map(s=>`${s[0]} · ${s[1]} min · <span class="pace-target">${paceRange(s[2],s[3])}</span>`).join("<br>")}</div>
+  </div>`).join("");
+}
+function currentRunPhase(){
+  return currentTrainingPhase();
+}
+function selectRunWorkout(day,readiness="green"){
+  const phase=currentRunPhase();
+  let preferred;
+  // Current weekly framework: Mon/Wed/Fri short runs. As build progresses,
+  // one short run earns quality while the others remain easy; long/brick work is phase dependent.
+  if(day===1) preferred=phase==="transition"?"easy":"strides";
+  else if(day===3) preferred=(phase==="build"||phase==="specific")?"threshold":"easy";
+  else if(day===5) preferred=phase==="specific"?"steady":"easy";
+  else preferred="easy";
+  if(readiness==="red") preferred="recovery";
+  if(readiness==="yellow" && ["threshold","vo2","speed","hills"].includes(preferred)) preferred="easy";
+  let pool=RUN_LIBRARY.filter(w=>w.type===preferred && w.phases.includes(phase));
+  if(!pool.length) pool=RUN_LIBRARY.filter(w=>w.type===preferred);
+  if(!pool.length) pool=RUN_LIBRARY.filter(w=>w.type==="easy");
+  const maxLevel=phase==="transition"?1:phase==="foundation"?2:phase==="build"?3:4;
+  pool=pool.filter(w=>w.level<=maxLevel);
+  return pool[Math.min(pool.length-1,Math.max(0,Math.floor((new Date().getDate()-1)/7)%Math.max(1,pool.length)))] || RUN_LIBRARY[2];
+}
+function renderRunPrescription(readiness="green"){
+  const day=new Date().getDay();
+  const card=$("run-prescription-card");
+  if(!card) return;
+  if(![1,3,5].includes(day)){card.classList.add("hidden");return}
+  const w=selectRunWorkout(day,readiness);
+  card.classList.remove("hidden");
+  $("run-rx-title").textContent=w.name;
+  $("run-rx-type").textContent=w.type.toUpperCase();
+  $("run-rx-sub").textContent=`${w.minutes} min · CS ${paceFmt(currentCS)}`;
+  $("run-rx-body").innerHTML=w.steps.map(s=>`<div class="interval-row"><div class="interval-label">${s[0]}</div><div><strong>${s[1]} min</strong><br><span class="pace-target">${paceRange(s[2],s[3])}</span></div></div>`).join("");
+  const reason=readiness==="red"?"Recovery is suppressed, so AthleteOS has reduced running intensity.":readiness==="yellow"?"Readiness is moderate; the run keeps useful aerobic work while limiting high-intensity stress.":`Selected for the ${currentRunPhase()} phase to build running economy, speed and durability without crowding the cycling and strength workload.`;
+  $("run-rx-reason").innerHTML=`<strong>Why this workout?</strong><br>${reason}`;
+}
+async function loadCS(){
+  if(!currentUser)return;
+  // Reuse athlete_settings if present; fall back gracefully if the column/table is not yet available.
+  const {data,error}=await supabase.from("athlete_settings").select("*").eq("user_id",currentUser.id).maybeSingle();
+  if(!error && data){
+    const v=Number(data.critical_speed_sec_per_km||data.cs_sec_per_km);
+    if(Number.isFinite(v)&&v>120&&v<600) currentCS=v;
+  }
+  if($("cs-pace")) $("cs-pace").value=paceFmt(currentCS).replace("/km","");
+  renderRunLibrary(); renderRunPrescription(); loadPerformanceDashboard();
+}
+async function saveCS(){
+  const v=paceSeconds($("cs-pace").value.trim());
+  if(!v||v<120||v>600){status($("cs-status"),"Enter CS as mm:ss per km, for example 5:00.");return}
+  currentCS=v;
+  // Try preferred field. If the live schema has not been extended yet, keep it locally for this build.
+  const {error}=await supabase.from("athlete_settings").upsert({user_id:currentUser.id,critical_speed_sec_per_km:v},{onConflict:"user_id"});
+  if(error){
+    localStorage.setItem(`athleteos_cs_${currentUser.id}`,String(v));
+    status($("cs-status"),"CS saved on this device. Database field can be added in the next schema update.",true);
+  }else status($("cs-status"),`Critical Speed saved: ${paceFmt(v)}`,true);
+  renderRunLibrary(); renderRunPrescription();
+}
+async function loadRunDurability(){
+  if(!currentUser)return;
+  const cutoff=new Date(Date.now()-42*86400000).toISOString();
+  const {data}=await supabase.from("activities").select("duration_sec,distance_m,avg_hr,avg_pace_sec_per_km,started_at").eq("sport","run").gte("started_at",cutoff).order("started_at",{ascending:false});
+  const runs=data||[];
+  const longRuns=runs.filter(r=>(Number(r.duration_sec)||0)>=3600);
+  if($("dur-long-count")) $("dur-long-count").textContent=String(longRuns.length);
+  const longest=runs.reduce((m,r)=>Math.max(m,(Number(r.duration_sec)||0)/60),0);
+  if($("dur-longest")) $("dur-longest").textContent=longest?`${Math.round(longest)} min`:"—";
+  if($("dur-consistency")) $("dur-consistency").textContent=runs.length>=12?"Strong":runs.length>=6?"Building":runs.length?"Starting":"—";
+  const durabilityLabel=longRuns.length>=4?"Baseline ready":longRuns.length?"Building":"Needs long-run data";
+  if($("dur-score")) $("dur-score").textContent=durabilityLabel;
+  if($("dash-run-dur")) $("dash-run-dur").textContent=durabilityLabel;
+}
+
+const BIKE_LIBRARY=[
+ {id:"rec30",name:"Recovery Spin 30",type:"recovery",level:1,minutes:30,phases:["transition","foundation","build","specific"],steps:[["Ride",30,0.50,0.60]],desc:"Very easy circulation ride. Keep cadence comfortable and breathing relaxed."},
+ {id:"rec45",name:"Recovery Spin 45",type:"recovery",level:1,minutes:45,phases:["transition","foundation","build","specific"],steps:[["Ride",45,0.50,0.62]],desc:"Easy aerobic recovery with no pressure to hold power."},
+ {id:"z260",name:"Aerobic Endurance 60",type:"endurance",level:1,minutes:60,phases:["transition","foundation","build"],steps:[["Warm-up",10,0.50,0.65],["Endurance",45,0.65,0.75],["Cool-down",5,0.50,0.60]],desc:"Straightforward Zone 2 aerobic development."},
+ {id:"z290",name:"Aerobic Endurance 90",type:"endurance",level:2,minutes:90,phases:["foundation","build","specific"],steps:[["Warm-up",10,0.50,0.65],["Endurance",75,0.65,0.75],["Cool-down",5,0.50,0.60]],desc:"Longer steady aerobic ride for durability."},
+ {id:"cad60",name:"Endurance + Cadence Skills",type:"endurance",level:1,minutes:60,phases:["transition","foundation"],steps:[["Warm-up",10,0.50,0.65],["Z2 + 6×1 min fast cadence",40,0.65,0.75],["Cool-down",10,0.50,0.60]],desc:"Aerobic ride with brief high-cadence neuromuscular work."},
+ {id:"tempo3x10",name:"Tempo 3 × 10",type:"tempo",level:1,minutes:60,phases:["foundation"],steps:[["Warm-up",12,0.50,0.70],["3 × 10 min",30,0.80,0.87],["Recoveries",8,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Entry-level muscular endurance."},
+ {id:"tempo2x20",name:"Tempo 2 × 20",type:"tempo",level:2,minutes:70,phases:["foundation","build"],steps:[["Warm-up",12,0.50,0.70],["2 × 20 min",40,0.82,0.88],["Recovery",8,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Longer aerobic muscular-endurance intervals."},
+ {id:"ss3x10",name:"Sweet Spot 3 × 10",type:"sweetspot",level:1,minutes:60,phases:["foundation"],steps:[["Warm-up",12,0.50,0.72],["3 × 10 min",30,0.88,0.92],["Recoveries",8,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Efficient FTP-supporting work with manageable fatigue."},
+ {id:"ss3x15",name:"Sweet Spot 3 × 15",type:"sweetspot",level:2,minutes:75,phases:["foundation","build"],steps:[["Warm-up",12,0.50,0.72],["3 × 15 min",45,0.88,0.93],["Recoveries",8,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Progress sweet-spot time in zone."},
+ {id:"ss2x20",name:"Sweet Spot 2 × 20",type:"sweetspot",level:2,minutes:70,phases:["foundation","build"],steps:[["Warm-up",12,0.50,0.72],["2 × 20 min",40,0.88,0.94],["Recovery",8,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Sustained sub-threshold work."},
+ {id:"thr4x8",name:"Threshold 4 × 8",type:"threshold",level:2,minutes:68,phases:["foundation","build"],steps:[["Warm-up",14,0.50,0.75],["4 × 8 min",32,0.98,1.02],["Recoveries",12,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"High-quality threshold work with repeatable intervals."},
+ {id:"thr3x10",name:"Threshold 3 × 10",type:"threshold",level:2,minutes:65,phases:["foundation","build"],steps:[["Warm-up",15,0.50,0.75],["3 × 10 min",30,0.98,1.02],["Recoveries",10,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Classic threshold development."},
+ {id:"thr2x15",name:"Threshold 2 × 15",type:"threshold",level:2,minutes:60,phases:["build"],steps:[["Warm-up",15,0.50,0.75],["2 × 15 min",30,0.99,1.03],["Recovery",5,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Long sustained threshold intervals."},
+ {id:"thr2x20",name:"Threshold 2 × 20",type:"threshold",level:3,minutes:75,phases:["build"],steps:[["Warm-up",15,0.50,0.75],["2 × 20 min",40,0.98,1.02],["Recovery",10,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Advanced threshold durability."},
+ {id:"ou3x8",name:"Over / Under 3 × 8",type:"overunder",level:2,minutes:62,phases:["build","specific"],steps:[["Warm-up",15,0.50,0.75],["3 × 8 min alternating",24,0.90,1.05],["Recoveries",13,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Alternate just below and just above FTP to improve lactate processing."},
+ {id:"ou3x12",name:"Over / Under 3 × 12",type:"overunder",level:3,minutes:78,phases:["build","specific"],steps:[["Warm-up",15,0.50,0.75],["3 × 12 min alternating",36,0.90,1.05],["Recoveries",12,0.50,0.60],["Cool-down",15,0.50,0.60]],desc:"Longer race-relevant threshold fluctuation work."},
+ {id:"vo25x3",name:"VO₂ 5 × 3",type:"vo2",level:1,minutes:55,phases:["foundation","build"],steps:[["Warm-up",15,0.50,0.75],["5 × 3 min",15,1.10,1.18],["Recoveries",15,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Introductory VO₂max intervals."},
+ {id:"vo24x4",name:"VO₂ 4 × 4",type:"vo2",level:2,minutes:58,phases:["build"],steps:[["Warm-up",16,0.50,0.75],["4 × 4 min",16,1.08,1.15],["Recoveries",16,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Longer intervals to accumulate time at high oxygen uptake."},
+ {id:"vo25x4",name:"VO₂ 5 × 4",type:"vo2",level:3,minutes:65,phases:["build"],steps:[["Warm-up",15,0.50,0.75],["5 × 4 min",20,1.08,1.15],["Recoveries",20,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"High-quality VO₂ progression."},
+ {id:"micro3030",name:"Micro 30 / 30",type:"micro",level:2,minutes:55,phases:["build"],steps:[["Warm-up",15,0.50,0.75],["3 × 8 min 30/30",24,0.55,1.20],["Set recoveries",6,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Repeated 30-second hard / 30-second easy micro-intervals."},
+ {id:"micro4020",name:"Micro 40 / 20",type:"micro",level:3,minutes:58,phases:["build"],steps:[["Warm-up",15,0.50,0.75],["3 × 8 min 40/20",24,0.50,1.18],["Set recoveries",9,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Dense aerobic-power intervals with limited recovery."},
+ {id:"micro3015",name:"Micro 30 / 15",type:"micro",level:3,minutes:58,phases:["build"],steps:[["Warm-up",15,0.50,0.75],["3 × 8 min 30/15",24,0.50,1.20],["Set recoveries",9,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"High-density micro intervals for aerobic power."},
+ {id:"torque6x5",name:"Torque 6 × 5",type:"torque",level:2,minutes:70,phases:["foundation","build"],steps:[["Warm-up",15,0.50,0.70],["6 × 5 min low cadence",30,0.80,0.88],["Recoveries",15,0.50,0.60],["Cool-down",10,0.50,0.60]],desc:"Low-cadence seated work around 55–65 rpm; controlled, not maximal torque."},
+ {id:"race3x15",name:"70.3 Power 3 × 15",type:"race",level:1,minutes:80,phases:["specific"],steps:[["Warm-up",15,0.50,0.70],["3 × 15 min race power",45,0.78,0.84],["Recoveries",10,0.55,0.65],["Cool-down",10,0.50,0.60]],desc:"Controlled race-power development."},
+ {id:"race2x30",name:"70.3 Power 2 × 30",type:"race",level:2,minutes:100,phases:["specific"],steps:[["Warm-up",15,0.50,0.70],["2 × 30 min race power",60,0.78,0.85],["Recovery",10,0.55,0.65],["Cool-down",15,0.50,0.60]],desc:"Long race-power intervals with fueling practice."},
+ {id:"dur120",name:"Durability 120",type:"durability",level:2,minutes:120,phases:["build","specific"],steps:[["Endurance",75,0.65,0.75],["Race-power finish",30,0.78,0.84],["Easy finish",15,0.50,0.60]],desc:"Develop the ability to hold race-relevant power after accumulated aerobic work."},
+ {id:"dur150",name:"Durability 150",type:"durability",level:3,minutes:150,phases:["specific"],steps:[["Endurance",90,0.65,0.75],["2 × 20 race power",40,0.78,0.85],["Easy/recoveries",20,0.50,0.60]],desc:"Long-course durability with race-power work late in the ride."}
+];
+
+function currentTrainingPhase(){
+  const d=new Date(), y=d.getFullYear(), m=d.getMonth()+1;
+  if(y===2026 && m===8)return "transition";
+  if((y===2026&&(m===9||m===10)))return "foundation";
+  if((y===2026&&(m>=11))||(y===2027&&m===1))return "build";
+  if(y===2027&&(m>=2&&m<=4))return "specific";
+  if(y===2027&&m===5)return "specific";
+  return "foundation";
+}
+let currentFTP=256;
+async function loadFTP(){
+  if(!currentUser)return;
+  const {data}=await supabase.from("profiles").select("ftp_watts").eq("id",currentUser.id).maybeSingle();
+  currentFTP=Number(data?.ftp_watts)||256;
+  if($("ftp-watts"))$("ftp-watts").value=currentFTP;
+  renderBikeLibrary(); renderRunLibrary();
+  renderBikePrescription();
+  renderRunPrescription(effectiveReadinessState());
+  loadPerformanceDashboard();
+}
+async function saveFTP(){
+  const ftp=num("ftp-watts");
+  if(!ftp||ftp<50||ftp>600)return status($("ftp-status"),"Enter a realistic FTP between 50 and 600 W.");
+  const {error}=await supabase.from("profiles").update({ftp_watts:Math.round(ftp)}).eq("id",currentUser.id);
+  if(error)return status($("ftp-status"),error.message);
+  currentFTP=Math.round(ftp);
+  status($("ftp-status"),`FTP updated to ${currentFTP} W. All bike targets recalculated.`,true);
+  renderBikeLibrary();renderBikePrescription();
+}
+function wattsRange(lo,hi){
+  const a=Math.round(currentFTP*lo),b=Math.round(currentFTP*hi);
+  return a===b?`${a} W`:`${a}–${b} W`;
+}
+function formatWorkoutSteps(w){
+  return w.steps.map(s=>{
+    const [label,min,lo,hi]=s;
+    return `<div class="interval-row"><div class="interval-label">${esc(label)}<br>${min} min</div><div><span class="power-target">${wattsRange(lo,hi)}</span><div class="note">${Math.round(lo*100)}–${Math.round(hi*100)}% FTP</div></div></div>`;
+  }).join("");
+}
+function renderBikeLibrary(){
+  const list=$("bike-library-list"); if(!list)return;
+  const type=$("bike-library-filter")?.value||"all",dur=$("bike-library-duration")?.value||"all";
+  const filtered=BIKE_LIBRARY.filter(w=>{
+    const typeOk=type==="all"||w.type===type;
+    const durOk=dur==="all"||(dur==="short"&&w.minutes<=60)||(dur==="medium"&&w.minutes>60&&w.minutes<=90)||(dur==="long"&&w.minutes>90);
+    return typeOk&&durOk;
+  });
+  $("bike-library-count").textContent=`${BIKE_LIBRARY.length} workouts`;
+  list.innerHTML=filtered.map(w=>`<details class="library-item">
+    <summary style="padding:0">
+      <div class="row"><div><strong>${esc(w.name)}</strong><div class="entry-sub">${w.minutes} min · ${esc(w.type)} · Level ${w.level}</div></div><span>›</span></div>
+    </summary>
+    <div style="margin-top:10px">${formatWorkoutSteps(w)}<div class="entry-sub" style="margin-top:8px">${esc(w.desc)}</div></div>
+  </details>`).join("");
+}
+async function recentBikeContext(){
+  if(!currentUser)return {count:0,last:null};
+  const {data}=await supabase.from("activities").select("started_at,rpe,avg_power,duration_sec,name").eq("sport","bike").order("started_at",{ascending:false}).limit(8);
+  return {count:(data||[]).length,last:(data||[])[0]||null};
+}
+
+let unplannedLoadState="none";
+let latestUnplannedActivity=null;
+
+function effectiveReadinessState(){
+  const base=readinessStateFromUI();
+  const rank={green:0,yellow:1,red:2};
+  if(unplannedLoadState==="none")return base;
+  return rank[unplannedLoadState]>rank[base]?unplannedLoadState:base;
+}
+
+async function loadUnplannedLoad(){
+  if(!currentUser)return;
+  const since=new Date(Date.now()-36*3600000).toISOString();
+  const {data}=await supabase.from("activities").select("*").eq("sport","other").gte("started_at",since).order("started_at",{ascending:false}).limit(5);
+  const rows=data||[];
+  latestUnplannedActivity=rows[0]||null;
+  unplannedLoadState="none";
+  const card=$("unplanned-load-card");
+  if(!latestUnplannedActivity){ if(card)card.classList.add("hidden"); return; }
+
+  const a=latestUnplannedActivity;
+  const duration=(Number(a.duration_sec)||0)/60;
+  const rpe=Number(a.rpe)||0;
+  const muscular=a.raw_data?.muscular_load||"low";
+
+  if(muscular==="high" && rpe>=8 && duration>=60) unplannedLoadState="red";
+  else if(muscular==="high" || muscular==="moderate" || rpe>=6 || duration>=90) unplannedLoadState="yellow";
+
+  if(card){
+    card.classList.remove("hidden");
+    const label=unplannedLoadState==="red"?"HIGH":unplannedLoadState==="yellow"?"MODERATE":"LOW";
+    $("unplanned-load-pill").textContent=label;
+    $("unplanned-load-summary").textContent=`${a.name||"Other activity"} · ${Math.round(duration)} min${a.avg_hr?` · avg HR ${a.avg_hr}`:""}${a.rpe?` · RPE ${a.rpe}`:""} · ${muscular} muscular load`;
+    const action=unplannedLoadState==="red"
+      ?"This added substantial non-programmed load. AthleteOS will treat today as recovery-biased: no plyometrics and no high-intensity progression."
+      : unplannedLoadState==="yellow"
+        ?"This adds meaningful total load. AthleteOS will preserve the training purpose but avoid unnecessary progression and suppress plyometrics when lower-body load was high."
+        :"This activity is being counted, but it is not large enough to alter today's prescription.";
+    $("unplanned-load-action").innerHTML=`<strong>Training impact</strong><br>${action}`;
+  }
+
+  renderBikePrescription();
+  renderRunPrescription(effectiveReadinessState());
+  const day=new Date().getDay();
+  if(day===3 && $("strength-B-plyo")){
+    $("strength-B-plyo").classList.toggle("hidden",effectiveReadinessState()==="red" || (latestUnplannedActivity?.raw_data?.muscular_load==="high"));
+  }
+}
+
+function readinessStateFromUI(){
+  const box=$("readiness-decision");
+  if(!box)return "green";
+  if(box.classList.contains("ready-red"))return "red";
+  if(box.classList.contains("ready-yellow"))return "yellow";
+  return "green";
+}
+async function selectBikeWorkout(){
+  const day=new Date().getDay(), phase=currentTrainingPhase(), readiness=effectiveReadinessState(), ctx=await recentBikeContext();
+  if(readiness==="red")return BIKE_LIBRARY.find(w=>w.id==="rec45");
+  if(day===6){
+    if(phase==="transition")return BIKE_LIBRARY.find(w=>w.id==="z290");
+    if(phase==="foundation")return BIKE_LIBRARY.find(w=>w.id==="z290");
+    if(phase==="build")return BIKE_LIBRARY.find(w=>w.id==="dur120");
+    return BIKE_LIBRARY.find(w=>w.id==="dur150");
+  }
+  if(phase==="transition")return BIKE_LIBRARY.find(w=>w.id==="cad60");
+  const progression=Math.min(3,1+Math.floor(ctx.count/4));
+  const lastRpe=Number(ctx.last?.rpe);
+  const effectiveLevel=(readiness==="yellow"||lastRpe>=9)?Math.max(1,progression-1):progression;
+  let candidates=[];
+  if(phase==="foundation"){
+    candidates=day===2
+      ? BIKE_LIBRARY.filter(w=>["sweetspot","threshold"].includes(w.type)&&w.phases.includes(phase))
+      : BIKE_LIBRARY.filter(w=>["vo2","torque","tempo"].includes(w.type)&&w.phases.includes(phase));
+  } else if(phase==="build"){
+    candidates=day===2
+      ? BIKE_LIBRARY.filter(w=>["threshold","overunder"].includes(w.type)&&w.phases.includes(phase))
+      : BIKE_LIBRARY.filter(w=>["vo2","micro"].includes(w.type)&&w.phases.includes(phase));
+  } else {
+    candidates=day===2
+      ? BIKE_LIBRARY.filter(w=>["race","overunder"].includes(w.type)&&w.phases.includes(phase))
+      : BIKE_LIBRARY.filter(w=>["race","vo2"].includes(w.type)&&w.phases.includes(phase));
+  }
+  candidates=candidates.filter(w=>w.level<=effectiveLevel);
+  if(!candidates.length)candidates=BIKE_LIBRARY.filter(w=>w.type==="endurance");
+  const week=Math.floor((Date.now()-new Date("2026-09-01").getTime())/(7*86400000));
+  return candidates[Math.abs(week)%candidates.length];
+}
+async function renderBikePrescription(){
+  const card=$("bike-prescription-card"); if(!card)return;
+  const day=new Date().getDay();
+  if(![2,4,6].includes(day)){card.classList.add("hidden");return;}
+  card.classList.remove("hidden");
+  const w=await selectBikeWorkout();
+  if(!w)return;
+  $("bike-rx-title").textContent=w.name;
+  $("bike-rx-type").textContent=w.type.toUpperCase();
+  $("bike-rx-sub").textContent=`${w.minutes} min · FTP ${currentFTP} W · ${currentTrainingPhase()} phase`;
+  $("bike-rx-body").innerHTML=formatWorkoutSteps(w);
+  const rs=effectiveReadinessState();
+  const reason=rs==="red"
+    ?"Recovery is RED, so AthleteOS replaced quality work with an easy recovery ride."
+    : rs==="yellow"
+      ?"Recovery is YELLOW, so AthleteOS selected a lower progression level while preserving the session purpose."
+      : `Selected from the ${currentTrainingPhase()} library using current FTP and recent bike-history progression.`;
+  $("bike-rx-reason").innerHTML=`<strong>Why this workout?</strong><br>${reason}`;
+}
+function status(el,msg,ok=false){el.textContent=msg;el.className="status "+(ok?"good":"warn")}
+function num(id){const v=$(id).value.trim();return v===""?null:Number(v)}
+function paceSeconds(v){if(!v)return null;const p=v.split(":");return p.length===2?Number(p[0])*60+Number(p[1]):null}
+function localDate(){return new Date().toLocaleDateString("en-CA")}
+function gotoPage(name){
+  document.querySelectorAll("[data-page]").forEach(p=>p.classList.add("hidden"));
+  document.querySelector(`[data-page="${name}"]`).classList.remove("hidden");
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",name==="library"?x.dataset.target==="plan":x.dataset.target===name));
+  if(name==="history") loadHistory();
+  if(name==="progress"||name==="today") loadHealthDashboard();
+}
+function renderToday(){
+  const d=new Date(), s=schedule[d.getDay()];
+  $("today-day").textContent=d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+  $("today-title").textContent=s[0]; $("today-sub").textContent=s[1];
+  $("today-pills").innerHTML=`<span class="pill">${s[2]}</span><span class="pill">${s[3]}</span>`;
+  $("today-prescription").innerHTML=`<div style="font-weight:800">${s[0]}</div><div class="note" style="margin-top:6px;line-height:1.5">${s[4]}</div>`;
+}
+async function ensureProfile(){
+  if(!currentUser)return;
+  await supabase.from("profiles").upsert({id:currentUser.id,display_name:(currentUser.email||"Athlete").split("@")[0],timezone:Intl.DateTimeFormat().resolvedOptions().timeZone},{onConflict:"id"});
+}
+function showApp(user){
+  currentUser=user;$("auth").classList.add("hidden");$("main").classList.remove("hidden");$("tabs").classList.remove("hidden");
+  ensureProfile();renderToday();loadHistory();loadReadiness();loadHealthDashboard();loadUnplannedLoad();loadFTP();loadCS();loadRunDurability();loadPerformanceDashboard();loadStravaStatus();setTimeout(handleStravaReturn,100);
+}
+function showAuth(){$("auth").classList.remove("hidden");$("main").classList.add("hidden");$("tabs").classList.add("hidden")}
+async function saveActivity(payload){
+  payload.user_id=currentUser.id;payload.source="manual";payload.started_at=new Date().toISOString();
+  const {error}=await supabase.from("activities").insert(payload);
+  if(error) return status($("save-status"),error.message);
+  status($("save-status"),"Workout saved to AthleteOS ✓",true); await loadHistory(); await loadUnplannedLoad();
+}
+function fmtDuration(sec){
+  if(sec==null)return "—";
+  const s=Math.round(Number(sec)),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),r=s%60;
+  return h?`${h}:${String(m).padStart(2,"0")}:${String(r).padStart(2,"0")}`:`${m}:${String(r).padStart(2,"0")}`;
+}
+function fmtPace(sec){
+  if(sec==null||!Number.isFinite(Number(sec)))return "—";
+  const s=Math.round(Number(sec));return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")} /km`;
+}
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+function activityMetric(label,value){
+  if(value===null||value===undefined||value==="")return "";
+  return `<div class="history-metric"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`;
+}
+function nextStrengthTarget(exName,sets){
+  const completed=sets.filter(x=>x.completed!==false&&x.actual_reps!=null);
+  if(!completed.length)return "Log completed sets to generate a progression target.";
+  const weights=completed.map(x=>Number(x.actual_weight)).filter(Number.isFinite);
+  const rpes=completed.map(x=>Number(x.rpe)).filter(Number.isFinite);
+  if(!weights.length)return "Repeat the prescription and add load once a reliable weight baseline is recorded.";
+  const w=Math.max(...weights);
+  const allTargetsHit=completed.every(x=>x.target_reps==null||Number(x.actual_reps)>=Number(x.target_reps));
+  const avgRpe=rpes.length?rpes.reduce((a,b)=>a+b,0)/rpes.length:null;
+  const lower=/deadlift|squat|leg|lunge|split/i.test(exName);
+  const jump=lower?10:5;
+  if(allTargetsHit&&(avgRpe==null||avgRpe<=8))return `Next target: approximately ${w+jump} lb at the same reps, if readiness is GREEN.`;
+  if(avgRpe!=null&&avgRpe>=9)return `Next target: repeat ${w} lb and improve rep quality before adding load.`;
+  return `Next target: repeat ${w} lb; add load after all prescribed reps are completed around RPE 8 or lower.`;
+}
+
+function activityStartMs(a){ return a?.started_at ? new Date(a.started_at).getTime() : NaN; }
+function similarActivity(a,b){
+  if(!a||!b||a.id===b.id)return false;
+  const sa=String(a.sport||"").toLowerCase(), sb=String(b.sport||"").toLowerCase();
+  if(sa!==sb)return false;
+  const ta=activityStartMs(a), tb=activityStartMs(b);
+  if(!Number.isFinite(ta)||!Number.isFinite(tb))return false;
+  const timeClose=Math.abs(ta-tb)<=20*60*1000;
+  const da=Number(a.duration_sec)||0, db=Number(b.duration_sec)||0;
+  const durClose=!da||!db||Math.abs(da-db)<=Math.max(180,0.12*Math.max(da,db));
+  const distA=Number(a.distance_m)||0, distB=Number(b.distance_m)||0;
+  const distClose=!distA||!distB||Math.abs(distA-distB)<=Math.max(500,0.12*Math.max(distA,distB));
+  return timeClose&&durClose&&distClose;
+}
+function duplicateMap(rows){
+  const out=new Map();
+  for(let i=0;i<rows.length;i++){
+    for(let j=i+1;j<rows.length;j++){
+      if(similarActivity(rows[i],rows[j])){
+        out.set(rows[i].id,rows[j]);
+        out.set(rows[j].id,rows[i]);
+      }
+    }
+  }
+  return out;
+}
+async function deleteActivity(id){
+  if(!confirm("Delete this activity from AthleteOS history?"))return;
+  const {error}=await supabase.from("activities").delete().eq("id",id).eq("user_id",currentUser.id);
+  if(error){alert(error.message);return}
+  await loadHistory();
+  await loadUnplannedLoad();
+}
+async function mergeDuplicate(manualId, importedId){
+  const {data:rows,error}=await supabase.from("activities").select("*").in("id",[manualId,importedId]);
+  if(error||!rows||rows.length<2){alert(error?.message||"Could not load both activities.");return}
+  const manual=rows.find(x=>x.id===manualId), imported=rows.find(x=>x.id===importedId);
+  if(!manual||!imported)return alert("Could not identify manual and imported records.");
+  const merged={
+    name: imported.name||manual.name,
+    duration_sec: imported.duration_sec??manual.duration_sec,
+    moving_time_sec: imported.moving_time_sec??manual.moving_time_sec,
+    distance_m: imported.distance_m??manual.distance_m,
+    avg_hr: imported.avg_hr??manual.avg_hr,
+    max_hr: imported.max_hr??manual.max_hr,
+    avg_power: imported.avg_power??manual.avg_power,
+    normalized_power: imported.normalized_power??manual.normalized_power,
+    avg_cadence: imported.avg_cadence??manual.avg_cadence,
+    elevation_gain_m: imported.elevation_gain_m??manual.elevation_gain_m,
+    avg_pace_sec_per_km: imported.avg_pace_sec_per_km??manual.avg_pace_sec_per_km,
+    calories: imported.calories??manual.calories,
+    rpe: manual.rpe??imported.rpe,
+    raw_data:{...(imported.raw_data||{}),...(manual.raw_data||{}),merged_from:[manual.id,imported.id]}
+  };
+  const {error:uErr}=await supabase.from("activities").update(merged).eq("id",imported.id).eq("user_id",currentUser.id);
+  if(uErr)return alert(uErr.message);
+  const {error:dErr}=await supabase.from("activities").delete().eq("id",manual.id).eq("user_id",currentUser.id);
+  if(dErr)return alert(dErr.message);
+  await loadHistory();
+}
+function attachSwipeDelete(){
+  document.querySelectorAll(".history-wrap").forEach(w=>{
+    const card=w.querySelector(".history-card");
+    if(!card)return;
+    let startX=null,dx=0;
+    card.addEventListener("touchstart",e=>{startX=e.touches[0].clientX;dx=0},{passive:true});
+    card.addEventListener("touchmove",e=>{
+      if(startX==null)return;
+      dx=e.touches[0].clientX-startX;
+      if(dx<0) card.style.transform=`translateX(${Math.max(-86,dx)}px)`;
+    },{passive:true});
+    card.addEventListener("touchend",()=>{
+      if(startX==null)return;
+      card.style.transform=dx<-45?"translateX(-86px)":"translateX(0)";
+      startX=null;
+    });
+  });
+}
+
+function aiData(a,key){const s=a?.raw_data?.streams?.[key];if(!s)return null;return Array.isArray(s)?s:(Array.isArray(s.data)?s.data:null)}
+function aiTime(sec){sec=Math.max(0,Math.round(Number(sec)||0));const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${m}:${String(s).padStart(2,'0')}`}
+function aiClock(sec){sec=Math.max(0,Number(sec)||0);const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60);return h?`${h}:${String(m).padStart(2,'0')}`:`${m}m`}
+function aiFinite(v){const n=Number(v);return Number.isFinite(n)?n:null}
+function aiAligned(a){
+ const hr=aiData(a,'heartrate')||[], sp=aiData(a,'velocity_smooth')||[], mov=aiData(a,'moving')||[], tm=aiData(a,'time')||[], dist=aiData(a,'distance')||[], alt=aiData(a,'altitude')||[], watts=aiData(a,'watts')||[], cad=aiData(a,'cadence')||[];
+ const n=Math.max(hr.length,sp.length,mov.length,tm.length,dist.length,alt.length,watts.length,cad.length); const out=[];
+ for(let i=0;i<n;i++){const H=aiFinite(hr[i]),S=aiFinite(sp[i]),T=aiFinite(tm[i]),D=aiFinite(dist[i]),A=aiFinite(alt[i]),W=aiFinite(watts[i]),C=aiFinite(cad[i]); const moving=mov.length?Boolean(mov[i]):(S!=null&&S>.5); out.push({i,hr:H,speed:S,time:T??i,distance:D,alt:A,watts:W,cad:C,moving});}
+ return out;
+}
+function aiCalc(a){
+ const all=aiAligned(a); const usable=all.filter(x=>x.moving&&x.hr!=null&&x.hr>=40&&x.hr<=220&&x.speed!=null&&x.speed>=.5); if(usable.length<20)return null;
+ const half=Math.floor(usable.length/2), one=usable.slice(0,half), two=usable.slice(half); const avg=(arr,k)=>{const v=arr.map(x=>x[k]).filter(Number.isFinite);return v.length?v.reduce((s,x)=>s+x,0)/v.length:null};
+ const hr1=avg(one,'hr'),hr2=avg(two,'hr'),sp1=avg(one,'speed')*3.6,sp2=avg(two,'speed')*3.6; const drift=hr1?((hr2/hr1)-1)*100:null; const ef1=hr1?sp1/hr1:null,ef2=hr2?sp2/hr2:null; const dec=ef1&&ef2?((ef1/ef2)-1)*100:null;
+ return {hr1,hr2,sp1,sp2,drift,dec};
+}
+function aiTicks(min,max,count=5){ if(!Number.isFinite(min)||!Number.isFinite(max))return[]; if(min===max){min-=1;max+=1} const out=[]; for(let i=0;i<count;i++)out.push(min+(max-min)*i/(count-1)); return out; }
+function aiChart(title,rows,yKey,{yUnit='',xKey='time',xUnit='time',transform=v=>v,yTransform=v=>v}={}){
+ let pts=rows.map(r=>({x:aiFinite(r[xKey]),y:aiFinite(r[yKey])})).filter(p=>p.x!=null&&p.y!=null); if(pts.length<2)return '';
+ const step=Math.max(1,Math.floor(pts.length/240)); pts=pts.filter((_,i)=>i%step===0||i===pts.length-1).map(p=>({x:transform(p.x),y:yTransform(p.y)}));
+ const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y), xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys); const padY=Math.max((ymax-ymin)*.08,1), y0=ymin-padY,y1=ymax+padY; const L=42,R=8,T=8,B=28,W=320,H=140,PW=W-L-R,PH=H-T-B;
+ const X=x=>L+(x-xmin)/Math.max(1e-9,xmax-xmin)*PW, Y=y=>T+(y1-y)/Math.max(1e-9,y1-y0)*PH; const poly=pts.map(p=>`${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join(' ');
+ const yTicks=aiTicks(y0,y1,5),xTicks=aiTicks(xmin,xmax,5); const fmtX=x=>xUnit==='time'?aiClock(x):xUnit==='km'?`${x.toFixed(0)}`:x.toFixed(0); const fmtY=y=>`${Math.round(y)}`;
+ let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">`; yTicks.forEach(v=>{svg+=`<line class="ai-gridline" x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ai-axis" x="${L-5}" y="${Y(v)+3}" text-anchor="end">${fmtY(v)}</text>`}); xTicks.forEach(v=>{svg+=`<line class="ai-gridline" x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${H-B}" opacity=".35"/><text class="ai-axis" x="${X(v)}" y="${H-10}" text-anchor="middle">${fmtX(v)}</text>`}); svg+=`<polyline class="ai-line" points="${poly}"/></svg>`;
+ return `<div class="ai-chart"><div class="ai-title">${title}</div>${svg}<div class="ai-note" style="display:flex;justify-content:space-between"><span>${yUnit}</span><span>${xUnit==='km'?'Distance (km)':'Moving time'}</span></div></div>`;
+}
+function activityIntelligence(a){
+ if(!a||a.source!=='strava')return ''; const an=a.raw_data?.analytics||{}; const calc=aiCalc(a)||{}; const all=aiAligned(a); const moving=all.filter(x=>x.moving); const powerStream=aiData(a,'watts'); const cadenceStream=aiData(a,'cadence');
+ const hr1=aiFinite(an.first_half_hr)??calc.hr1, hr2=aiFinite(an.second_half_hr)??calc.hr2, sp1=aiFinite(an.first_half_speed_kph)??calc.sp1, sp2=aiFinite(an.second_half_speed_kph)??calc.sp2, drift=aiFinite(an.hr_drift_pct)??calc.drift, dec=aiFinite(an.efficiency_decoupling_pct)??calc.dec;
+ const hasMeasuredPower=Array.isArray(powerStream)&&powerStream.filter(v=>Number.isFinite(Number(v))).length>100; const powerLabel=hasMeasuredPower?'Measured power':(a.avg_power!=null?'Estimated power':'No power data'); const cls=Number.isFinite(dec)?(Math.abs(dec)<5?'ai-good':Math.abs(dec)<=7.5?'ai-warn':'ai-bad'):''; const interp=!Number.isFinite(dec)?'Decoupling unavailable':Math.abs(dec)<5?'Stable aerobic response':Math.abs(dec)<=7.5?'Moderate late-session drift':'High late-session drift';
+ const zones=an?.hr_zones?.pct; let zhtml=''; if(zones){[1,2,3,4,5].forEach(z=>{const p=Number(zones['z'+z])||0;zhtml+=`<div class="ai-zone"><strong>Z${z}</strong><div class="ai-bar"><span style="width:${Math.max(0,Math.min(100,p)).toFixed(1)}%"></span></div><span>${p.toFixed(0)}%</span></div>`})}
+ const stop=Math.max(0,(Number(a.duration_sec)||0)-(Number(a.moving_time_sec)||0)); let html=`<div class="ai-card"><div class="ai-head"><div><div class="ai-title">Activity Intelligence</div><strong>Heart-rate & durability analysis</strong></div><span class="ai-badge">${powerLabel}</span></div><div class="ai-grid">`;
+ [['Moving time',aiTime(a.moving_time_sec)],['Stopped / non-moving',aiTime(stop)],['1st-half HR',hr1!=null?`${hr1.toFixed(0)} bpm`:'—'],['2nd-half HR',hr2!=null?`${hr2.toFixed(0)} bpm`:'—'],['HR drift',drift!=null?`${drift.toFixed(1)}%`:'—'],['Efficiency decoupling',dec!=null?`${dec.toFixed(1)}%`:'—'],['1st-half speed',sp1!=null?`${sp1.toFixed(1)} km/h`:'—'],['2nd-half speed',sp2!=null?`${sp2.toFixed(1)} km/h`:'—']].forEach(([l,v])=>html+=`<div class="ai-stat"><span>${l}</span><strong>${v}</strong></div>`); html+='</div>';
+ const cleanHr=moving.filter(x=>x.hr!=null&&x.hr>=40&&x.hr<=220); html+=aiChart('Heart rate over time',cleanHr,'hr',{yUnit:'bpm',xKey:'time',xUnit:'time'}); if(zhtml)html+=`<div class="ai-chart"><div class="ai-title">Heart-rate zones</div>${zhtml}</div>`; html+=aiChart('Speed over time',moving.filter(x=>x.speed!=null),'speed',{yUnit:'km/h',xKey:'time',xUnit:'time',yTransform:v=>v*3.6}); html+=aiChart('Elevation profile',all.filter(x=>x.alt!=null&&x.distance!=null),'alt',{yUnit:'m',xKey:'distance',xUnit:'km',transform:v=>v/1000}); if(hasMeasuredPower)html+=aiChart('Power over time',moving.filter(x=>x.watts!=null),'watts',{yUnit:'W',xKey:'time',xUnit:'time'}); if(Array.isArray(cadenceStream)&&cadenceStream.length>20)html+=aiChart('Cadence over time',moving.filter(x=>x.cad!=null),'cad',{yUnit:'rpm',xKey:'time',xUnit:'time'});
+ html+=`<div class="hr-callout"><strong class="${cls}">${interp}</strong><br>Calculations use moving samples only and filter obvious HR dropouts. Outdoor speed/HR decoupling is contextual; once measured power is available, AthleteOS will prioritize power/HR decoupling.</div><div class="ai-note">Valid HR/speed moving samples: ${moving.filter(x=>x.hr!=null&&x.hr>=40&&x.hr<=220&&x.speed!=null&&x.speed>=.5).length.toLocaleString()}. ${hasMeasuredPower?'Power stream detected.':'No measured watts stream detected; average Strava watts are treated as estimated.'}</div></div>`; return html;
+}
+
+
+async function loadHistory(){
+  if(!currentUser)return;
+  const [aRes,sRes,setRes]=await Promise.all([
+    supabase.from("activities").select("*").order("started_at",{ascending:false}).limit(75),
+    supabase.from("strength_sessions").select("id,session_date,title,focus,notes").order("session_date",{ascending:false}).limit(25),
+    supabase.from("strength_sets").select("*,exercise_library(name,slug,default_unit)").order("set_number",{ascending:true})
+  ]);
+  const data=aRes.data||[], sessions=sRes.data||[], allSets=setRes.data||[];
+  const dups=duplicateMap(data);
+  $("activity-count").textContent=data.length; $("strength-count").textContent=sessions.length;
+
+  $("history-list").innerHTML=data.length?data.map(a=>{
+    const when=new Date(a.started_at);
+    const date=when.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+    const time=when.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
+    const km=a.distance_m!=null?Number(a.distance_m)/1000:null;
+    const duration=a.duration_sec!=null?Number(a.duration_sec):null;
+    const speed=km!=null&&duration?km/(duration/3600):null;
+    const calcPace=(a.sport==="run"&&km&&duration)?duration/km:null;
+    const pace=a.avg_pace_sec_per_km??calcPace;
+    const src=a.source==="apple_health"?"Apple Health":a.source==="strava"?"Strava":a.source==="manual"?"Manual":a.source||"Unknown";
+    const compact=[duration!=null?fmtDuration(duration):null,km!=null?`${km.toFixed(2)} km`:null].filter(Boolean).join(" · ");
+    const dup=dups.get(a.id);
+    const isManual=a.source==="manual";
+    const duplicateBadge=dup?`<div class="dup-badge">POSSIBLE DUPLICATE</div>`:"";
+    const freshness=a.source==="apple_health"
+      ? `<div class="source-badge">${freshnessMarkup(a.started_at?.slice(0,10))}</div>`
+      : `<div class="source-badge">${esc(src)}</div>`;
+
+    const metrics=[
+      activityMetric("Duration",duration!=null?fmtDuration(duration):null),
+      activityMetric("Distance",km!=null?`${km.toFixed(2)} km`:null),
+      activityMetric("Average HR",a.avg_hr!=null?`${a.avg_hr} bpm`:null),
+      activityMetric("Max HR",a.max_hr!=null?`${a.max_hr} bpm`:null),
+      activityMetric("Calories",a.calories!=null?`${a.calories} kcal`:null),
+      activityMetric("Avg cadence",a.avg_cadence!=null?`${Number(a.avg_cadence).toFixed(0)} ${a.sport==="run"?"spm":"rpm"}`:null),
+      activityMetric("Elevation gain",a.elevation_gain_m!=null?`${Number(a.elevation_gain_m).toFixed(0)} m`:null),
+      activityMetric("Avg pace",a.sport==="run"&&pace!=null?fmtPace(pace):null),
+      activityMetric("Avg speed",a.sport==="bike"&&speed!=null?`${speed.toFixed(1)} km/h`:null),
+      activityMetric("Average power",a.avg_power!=null?`${a.avg_power} W`:null),
+      activityMetric("Normalized power",a.normalized_power!=null?`${a.normalized_power} W`:null),
+      activityMetric("RPE",a.rpe!=null?`${a.rpe}/10`:null),
+      activityMetric("Activity type",a.raw_data?.category?String(a.raw_data.category).replaceAll("_"," "):null),
+      activityMetric("Muscular load",a.raw_data?.muscular_load?String(a.raw_data.muscular_load).toUpperCase():null)
+    ].join("");
+
+    let mergeButton="";
+    if(dup){
+      const manual = isManual ? a : (dup.source==="manual"?dup:null);
+      const imported = a.source!=="manual" ? a : (dup.source!=="manual"?dup:null);
+      if(manual&&imported){
+        mergeButton=`<button class="secondary merge-small" onclick="window.__mergeDup('${manual.id}','${imported.id}')">Merge</button>`;
+      }
+    }
+
+    return `<div class="history-wrap">
+      <div class="history-delete" onclick="window.__deleteActivity('${a.id}')">Delete</div>
+      <details class="history-card">
+        <summary>
+          <div class="history-head">
+            <div>
+              <div class="entry-title">${esc(a.name||a.sport)}</div>
+              <div class="entry-sub">${esc(compact||a.sport)}</div>
+              ${freshness}
+              ${duplicateBadge}
+            </div>
+            <div class="history-head-right">
+              <div class="entry-date">${esc(date)}</div>
+              <div class="entry-date">${esc(time)}</div>
+              <div style="font-size:20px;margin-top:5px">›</div>
+            </div>
+          </div>
+        </summary>
+        <div class="history-detail">
+          <div class="section-title">Workout details</div>
+          <div class="history-metrics">${metrics||'<div class="note">No additional metrics were available for this activity.</div>'}</div>
+          ${activityIntelligence(a)}
+          ${dup?`<div class="hr-callout"><strong>Possible duplicate detected</strong><br>This looks similar to ${esc(dup.source||"another")} activity from ${new Date(dup.started_at).toLocaleString()}.</div>`:""}
+          <div class="history-actions">
+            ${mergeButton}
+            <button class="secondary delete-small" onclick="window.__deleteActivity('${a.id}')">Delete</button>
+          </div>
+          <div class="entry-sub" style="margin-top:10px">Source: ${esc(src)}${a.external_id?` · ID ${esc(a.external_id)}`:""}</div>
+        </div>
+      </details>
+    </div>`;
+  }).join(""):'<div class="note">No activities saved yet.</div>';
+
+  $("strength-history").innerHTML=sessions.length?sessions.map(s=>{
+    const ss=allSets.filter(x=>x.session_id===s.id);
+    const groups={};
+    ss.forEach(x=>{
+      const name=x.exercise_library?.name||"Exercise";
+      (groups[name]??=[]).push(x);
+    });
+    const exerciseHtml=Object.entries(groups).map(([name,sets])=>{
+      const volume=sets.reduce((sum,x)=>sum+(Number(x.actual_weight)||0)*(Number(x.actual_reps)||0),0);
+      const rows=sets.map(x=>`<div class="set-history">
+        <span>#${x.set_number}</span>
+        <span>${x.actual_weight??"—"} lb</span>
+        <span>${x.actual_reps??"—"} reps</span>
+        <span>${x.rpe!=null?`RPE ${x.rpe}`:"—"}</span>
+      </div>`).join("");
+      return `<div class="exercise-history">
+        <div class="exercise-history-title">${esc(name)}</div>
+        ${rows}
+        ${volume?`<div class="entry-sub" style="margin-top:6px">Volume: ${Math.round(volume).toLocaleString()} lb-reps</div>`:""}
+        <div class="next-target">${esc(nextStrengthTarget(name,sets))}</div>
+      </div>`;
+    }).join("");
+    return `<details class="history-card">
+      <summary>
+        <div class="history-head">
+          <div><div class="entry-title">${esc(s.title)}</div><div class="entry-sub">${esc(s.focus||"Strength")}</div></div>
+          <div class="history-head-right"><div class="entry-date">${esc(s.session_date)}</div><div style="font-size:20px;margin-top:5px">›</div></div>
+        </div>
+      </summary>
+      <div class="history-detail">
+        ${exerciseHtml||'<div class="note">No set details recorded for this session.</div>'}
+        ${s.notes?`<div class="entry-sub" style="margin-top:10px">Notes: ${esc(s.notes)}</div>`:""}
+      </div>
+    </details>`;
+  }).join(""):'<div class="note">No strength sessions saved yet.</div>';
+
+  window.__deleteActivity=deleteActivity;
+  window.__mergeDup=mergeDuplicate;
+  attachSwipeDelete();
+}
+async function loadReadiness(){
+  const {data}=await supabase.from("readiness_daily").select("*").eq("date",localDate()).maybeSingle();
+  if(!data){ renderDecision(null,null,null,null,null,null); return; }
+  $("rd-readiness").value=data.training_readiness??"";
+  $("rd-hrv").value=data.hrv_ms??"";
+  $("rd-rhr").value=data.resting_hr??"";
+  $("rd-sleep").value=data.sleep_score??"";
+  $("rd-bb").value=data.body_battery??"";
+  $("rd-weight").value=data.weight_lb??"";
+  $("rd-feel").value=data.subjective_fatigue??"";
+  $("rd-soreness").value=data.subjective_soreness??"";
+  $("rd-illness").checked=Boolean(data.raw_data?.readiness_input?.illness_or_injury);
+  const model=data.raw_data?.readiness_model;
+  if(model) renderReadinessModel(model); else renderDecision(data.training_readiness,data.sleep_score,data.body_battery,data.hrv_ms,data.sleep_hours,data.resting_hr);
+}
+
+function ageDays(dateStr){
+  if(!dateStr)return null;
+  const now=new Date();
+  const d=new Date(dateStr+"T12:00:00");
+  return Math.floor((now-d)/86400000);
+}
+function freshnessMarkup(dateStr){
+  if(!dateStr)return '<span class="freshness fresh-stale">NO DATA</span>';
+  const days=ageDays(dateStr);
+  if(days<=0)return '<span class="freshness fresh-now">TODAY</span>';
+  if(days===1)return '<span class="freshness fresh-old">1 DAY OLD</span>';
+  return `<span class="freshness fresh-stale">${days} DAYS OLD</span>`;
+}
+function prettySyncDate(dateStr){
+  if(!dateStr)return "No imported data yet";
+  const days=ageDays(dateStr);
+  const d=new Date(dateStr+"T12:00:00");
+  const base=d.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+  return days<=0?`Today · ${base}`:days===1?`Yesterday · ${base}`:`${days} days ago · ${base}`;
+}
+async function refreshImportedData(){
+  if($("health-sync-status")) status($("health-sync-status"),"Refreshing imported data…",true);
+  await Promise.all([loadHealthDashboard(),loadHistory(),loadUnplannedLoad(),loadRunDurability(),loadPerformanceDashboard()]);
+  if($("health-sync-status")) status($("health-sync-status"),"Latest data from AthleteOS Cloud loaded ✓",true);
+}
+
+async function loadHealthDashboard(){
+  if(!currentUser)return;
+  const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-14);
+  const cutoffStr=cutoff.toLocaleDateString("en-CA");
+  const [{data:rows},{data:rides}] = await Promise.all([
+    supabase.from("readiness_daily").select("*").gte("date",cutoffStr).order("date",{ascending:false}),
+    supabase.from("activities").select("sport,distance_m,duration_sec,started_at,source").eq("sport","bike").gte("started_at",cutoff.toISOString())
+  ]);
+  const health=rows||[];
+  const first=(key)=>health.find(x=>x[key]!=null);
+  const rhr=first("resting_hr"), hrv=first("hrv_ms"), sleep=first("sleep_hours"), today=health.find(x=>x.date===localDate());
+  const imported=health.filter(x=>x.source==="apple_health");
+  const latestImported=imported[0]||null;
+  if($("health-last-sync")) $("health-last-sync").textContent=prettySyncDate(latestImported?.date);
+
+  $("auto-rhr").textContent=rhr?`${rhr.resting_hr} bpm`:"—";
+  $("auto-rhr-src").textContent=rhr?`${rhr.date} · ${rhr.source}`:"Not received yet";
+  if($("auto-rhr-fresh")) $("auto-rhr-fresh").innerHTML=freshnessMarkup(rhr?.date);
+  $("auto-hrv").textContent=hrv?`${Number(hrv.hrv_ms).toFixed(0)} ms`:"—";
+  $("auto-hrv-src").textContent=hrv?`${hrv.date} · ${hrv.source}`:"Not received yet";
+  if($("auto-hrv-fresh")) $("auto-hrv-fresh").innerHTML=freshnessMarkup(hrv?.date);
+  $("auto-sleep").textContent=sleep?`${Number(sleep.sleep_hours).toFixed(1)} h`:"—";
+  $("auto-sleep-src").textContent=sleep?`${sleep.date} · ${sleep.source}`:"Not received yet";
+  if($("auto-sleep-fresh")) $("auto-sleep-fresh").innerHTML=freshnessMarkup(sleep?.date);
+  $("auto-steps").textContent=today?.steps!=null?Number(today.steps).toLocaleString():"—";
+  if($("auto-steps-fresh")) $("auto-steps-fresh").innerHTML=freshnessMarkup(today?.steps!=null?today.date:null);
+  const importedAge=latestImported?ageDays(latestImported.date):null;
+  $("auto-health-note").textContent=importedAge==null
+    ?"No Apple Health import has been received yet."
+    : importedAge===0
+      ?"Apple Health import is current for today. Garmin-only Training Readiness and Body Battery remain manual."
+      : `Apple Health connection is active, but the newest imported record is ${importedAge} day${importedAge===1?"":"s"} old. AthleteOS will not treat stale values as today's data.`;
+  if($("dash-rhr")) $("dash-rhr").textContent=rhr?`${rhr.resting_hr} bpm`:"—";
+  if($("dash-hrv")) $("dash-hrv").textContent=hrv?`${Number(hrv.hrv_ms).toFixed(0)} ms`:"—";
+
+  const avg=(key)=>{const vals=health.map(x=>Number(x[key])).filter(Number.isFinite);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null};
+  const ar=avg("resting_hr"), as=avg("sleep_hours"), ah=avg("hrv_ms");
+  $("trend-rhr").textContent=ar!=null?`${ar.toFixed(1)} bpm`:"—";
+  $("trend-sleep").textContent=as!=null?`${as.toFixed(1)} h`:"—";
+  $("trend-hrv").textContent=ah!=null?`${ah.toFixed(0)} ms`:"—";
+  const recentRides=(rides||[]).filter(x=>new Date(x.started_at)>=new Date(Date.now()-7*86400000));
+  const km=recentRides.reduce((s,x)=>s+(Number(x.distance_m)||0),0)/1000;
+  $("trend-bike").textContent=recentRides.length?`${km.toFixed(0)} km`:"0 km";
+  $("trend-note").textContent=health.length>=5?"AthleteOS is using these recent values as a rolling recovery baseline.":"Baseline is still developing; more automatic sync days will improve adaptation decisions.";
+
+  const current=health.find(x=>x.date===localDate())||{};
+  const lastSleep=(sleep&&ageDays(sleep.date)<=1)?sleep.sleep_hours:null;
+  const lastRhr=(rhr&&ageDays(rhr.date)<=1)?rhr.resting_hr:null;
+  const lastHrv=(hrv&&ageDays(hrv.date)<=1)?hrv.hrv_ms:null;
+  const currentModel=current.raw_data?.readiness_model;
+  if(currentModel) renderReadinessModel(currentModel); else renderDecision(current.training_readiness??null,current.sleep_score??null,current.body_battery??null,lastHrv,lastSleep,lastRhr,health);
+}
+function renderReadinessModel(model){
+  if(!model)return null;
+  const state=String(model.state||"green").toUpperCase();
+  const klass=state==="RED"?"ready-red":state==="YELLOW"?"ready-yellow":"ready-green";
+  const action=state==="GREEN"?"Follow Plan":state==="YELLOW"?"Reduce Load":"Recovery";
+  const message=state==="GREEN"?"Proceed with the planned session. Monitor perceived effort during the warm-up.":state==="YELLOW"?"Reduce volume or intensity while preserving the session purpose.":"Replace high-intensity work with easy aerobic or recovery work.";
+  const order=["garmin","sleep","hrv","rhr","body_battery","load","subjective","response"];
+  const components=model.components||{};
+  const cards=order.filter(k=>components[k]).map(k=>{const c=components[k];const value=c.score==null?"Waiting for data":`${Math.round(Number(c.score))}/100`;return `<div class="readiness-component"><span>${esc(c.label||k)} · ${Number(c.weight)||0}%</span><strong>${value}</strong></div>`}).join("");
+  const context=Array.isArray(model.context)?model.context:[];
+  const overrides=Array.isArray(model.overrides)?model.overrides:[];
+  const note=overrides.length?`Override: ${overrides.join(", ")}.`:context.length?`Context: ${context.join(", ")}. No single ordinary metric acts as a veto.`:"No recovery override is active.";
+  const mode=model.mode==="garmin_composite"?"Garmin composite mode: Garmin 40%, recent load 25%, subjective state 20%, recent workout response 15%. Missing inputs are reweighted rather than treated as zero.":"Direct-signal mode: sleep 25%, HRV 20%, resting HR 15%, Body Battery 15%, recent load 15%, subjective state 10%. Missing inputs are reweighted.";
+  const box=$("readiness-decision");
+  if(box){box.className=`readiness-box ${klass}`;box.innerHTML=`<div class="readiness-head"><div><div class="readiness-score">${state} · ${model.score==null?"—":Math.round(Number(model.score))}/100</div><div class="note">${action}</div></div><span class="readiness-confidence">${esc(model.confidence||"low")} confidence</span></div><div class="note" style="margin-top:8px">${message}</div>${cards?`<div class="readiness-components">${cards}</div>`:""}<div class="readiness-context">${esc(note)}</div><details class="readiness-method"><summary>How this score is weighted</summary><div class="detail">${esc(mode)} Green ≥80 · Yellow 60–79 · Red &lt;60. Severe multi-signal combinations can override the score.</div></details>`;}
+  return String(model.state||"green").toLowerCase();
+}
+window.__renderReadinessModel=renderReadinessModel;
+function renderDecision(r,s,b,h,sleepHours=null,rhr=null,history=[]){
+  let state="GREEN",klass="ready-green",reasons=[];
+  const recent=(history||[]).slice(0,7);
+  const avg=(key)=>{const vals=recent.map(x=>Number(x[key])).filter(Number.isFinite);return vals.length>=2?vals.reduce((a,b)=>a+b,0)/vals.length:null};
+  const baseRhr=avg("resting_hr"), baseHrv=avg("hrv_ms");
+
+  if(r!=null&&r<50) reasons.push("Garmin readiness <50");
+  if(b!=null&&b<35) reasons.push("Body Battery <35");
+  if(s!=null&&s<60) reasons.push("sleep score <60");
+  if(baseRhr!=null&&rhr!=null&&rhr-baseRhr>=8) reasons.push("resting HR elevated");
+  if(baseHrv!=null&&h!=null&&h<baseHrv*0.8) reasons.push("HRV materially below baseline");
+  if(reasons.length){state="RED";klass="ready-red";}
+  else {
+    const yellow=[];
+    if(r!=null&&r<70) yellow.push("Garmin readiness <70");
+    if(b!=null&&b<55) yellow.push("Body Battery <55");
+    if(s!=null&&s<75) yellow.push("sleep score <75");
+    if(baseRhr!=null&&rhr!=null&&rhr-baseRhr>=5) yellow.push("resting HR above baseline");
+    if(baseHrv!=null&&h!=null&&h<baseHrv*0.9) yellow.push("HRV below baseline");
+    if(yellow.length){state="YELLOW";klass="ready-yellow";reasons=yellow;}
+  }
+  const msg=state==="GREEN"?"Available recovery data supports following the plan.":state==="YELLOW"?"Reduce volume/intensity while preserving the session purpose.":"Recovery markers are suppressed; replace high-intensity work with easy aerobic/recovery work.";
+  const reasonText=reasons.length?` Signals: ${reasons.join(", ")}.`:"";
+  const box=$("readiness-decision"); if(box){box.className="readiness-box "+klass;box.innerHTML=`<strong>${state} — ${state==="GREEN"?"Follow Plan":state==="YELLOW"?"Reduce Load":"Recovery"}</strong><div class="note" style="margin-top:4px">${msg}${reasonText}</div>`;}
+  return state.toLowerCase();
+}
+async function saveReadiness(){
+  const r=num("rd-readiness"),s=num("rd-sleep"),b=num("rd-bb"),h=num("rd-hrv");
+  const existing=(await supabase.from("readiness_daily").select("*").eq("date",localDate()).maybeSingle()).data||{};
+  const rawData={...(existing.raw_data||{}),readiness_input:{...(existing.raw_data?.readiness_input||{}),illness_or_injury:Boolean($("rd-illness")?.checked)}};
+  const payload={...existing,user_id:currentUser.id,date:localDate(),source:existing.source||"manual",training_readiness:r,resting_hr:num("rd-rhr")??existing.resting_hr??null,hrv_ms:h??existing.hrv_ms??null,sleep_score:s,body_battery:b,weight_lb:num("rd-weight")??existing.weight_lb??null,subjective_fatigue:num("rd-feel"),subjective_soreness:num("rd-soreness"),raw_data:rawData};
+  const {error}=await supabase.from("readiness_daily").upsert(payload,{onConflict:"user_id,date"});
+  if(error)return status($("readiness-status"),error.message);
+  status($("readiness-status"),"Readiness saved ✓",true);
+  const {data:fresh}=await supabase.from("readiness_daily").select("readiness_state,raw_data").eq("date",localDate()).maybeSingle();
+  const state=renderReadinessModel(fresh?.raw_data?.readiness_model)||fresh?.readiness_state||"green";
+  renderBikePrescription();
+  renderRunPrescription(state);
+  loadPerformanceDashboard();
+}
+async function getExerciseId(slug){
+  const {data,error}=await supabase.from("exercise_library").select("id").eq("slug",slug).single();
+  if(error) throw error; return data.id;
+}
+
+async function saveStrength(){
+  status($("save-status"),"Saving strength session…");
+  const key=$("strength-session-select")?.value||"A";
+  const meta={
+    A:{title:"Strength A — Cycling Focus",focus:"cycling",specs:[
+      ["trap-bar-deadlift","A-tb",175,5],
+      ["bulgarian-split-squat","A-bs",null,8],
+      ["bench-press","A-bp",null,6],
+      ["seated-cable-row","A-cr",null,8]
+    ]},
+    B:{title:"Strength B — Running Durability",focus:"running",specs:[
+      ["romanian-deadlift","B-rdl",null,6],
+      ["rear-foot-elevated-split-squat","B-rfess",null,8],
+      ["standing-calf-raise","B-calf",null,10],
+      ["soleus-raise","B-sol",null,12]
+    ]},
+    C:{title:"Strength C — Upper / Athletic",focus:"athletic",specs:[
+      ["overhead-press","C-ohp",null,6],
+      ["pull-down","C-pd",null,8],
+      ["incline-dumbbell-press","C-idp",null,8]
+    ]}
+  }[key];
+  const {data:session,error:sErr}=await supabase.from("strength_sessions").insert({
+    user_id:currentUser.id,session_date:localDate(),title:meta.title,focus:meta.focus
+  }).select("id").single();
+  if(sErr)return status($("save-status"),sErr.message);
+
+  const rows=[];
+  for(const [slug,prefix,targetW,targetR] of meta.specs){
+    try{
+      const exid=await getExerciseId(slug);
+      for(let i=1;i<=3;i++){
+        const repId=(prefix==="B-rdl" && i===3)?"B-rdl-r2b":prefix+"-r"+i;
+        rows.push({
+          user_id:currentUser.id,session_id:session.id,exercise_id:exid,set_number:i,
+          target_weight:targetW,target_reps:targetR,
+          actual_weight:num(prefix+"-w"+i),actual_reps:num(repId),rpe:num(prefix+"-e"+i),
+          completed:num(repId)!=null
+        });
+      }
+    }catch(e){
+      console.warn("Exercise missing from library:",slug);
+    }
+  }
+  if(rows.length){
+    const {error}=await supabase.from("strength_sets").insert(rows);
+    if(error)return status($("save-status"),error.message);
+  }
+  status($("save-status"),`${meta.title} saved ✓`,true); await loadHistory();
+}
+$("signin").onclick=async()=>{
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email)return status($("auth-status"),"Enter your email."); if(!password)return status($("auth-status"),"Enter your password.");
+  const {data,error}=await supabase.auth.signInWithPassword({email,password}); if(error)return status($("auth-status"),error.message); showApp(data.user);
+};
+$("signup").onclick=async()=>{
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email)return status($("auth-status"),"Enter your email."); if(!password||password.length<6)return status($("auth-status"),"Use a password of at least 6 characters.");
+  const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin}}); if(error)return status($("auth-status"),error.message);
+  if(data.session)showApp(data.user);else status($("auth-status"),"Account created. Check your email, confirm it, then sign in.",true);
+};
+$("signout").onclick=async()=>{await supabase.auth.signOut();showAuth()};
+$("save-readiness").onclick=saveReadiness;$("save-strength").onclick=saveStrength;
+$("save-ftp").onclick=saveFTP;
+$("bike-library-filter").onchange=renderBikeLibrary;
+$("bike-library-duration").onchange=renderBikeLibrary;
+
+function showStrengthSession(key){
+  ["A","B","C"].forEach(k=>$("strength-"+k)?.classList.toggle("hidden",k!==key));
+  if($("strength-session-select"))$("strength-session-select").value=key;
+  if($("strength-session-pill"))$("strength-session-pill").textContent=key;
+  const names={A:"Strength A — Cycling Focus",B:"Strength B — Running Durability",C:"Strength C — Upper / Athletic"};
+  if($("strength-form-title"))$("strength-form-title").textContent=names[key];
+  const red=effectiveReadinessState()==="red";
+  if($("strength-B-plyo"))$("strength-B-plyo").classList.toggle("hidden",red);
+  if($("strength-form-note"))$("strength-form-note").textContent=red&&key==="B"
+    ?"RED readiness: plyometrics are suppressed. Keep strength controlled and stop well short of failure."
+    :"Log the prescribed sets, reps and RPE.";
+}
+function openPrescribedLogger(){
+  const day=new Date().getDay();
+  gotoPage("log");
+  if([1,3,5].includes(day)){
+    document.querySelectorAll(".sport-btn").forEach(b=>b.classList.toggle("active",b.dataset.sport==="strength"));
+    ["run","bike","strength","other"].forEach(x=>$(x+"-form").classList.toggle("hidden",x!=="strength"));
+    const key=day===1?"A":day===3?"B":"C";
+    showStrengthSession(key);
+  } else if([2,4,6].includes(day)){
+    ["run","bike","strength","other"].forEach(x=>$(x+"-form").classList.toggle("hidden",x!=="bike"));
+  } else {
+    ["run","bike","strength","other"].forEach(x=>$(x+"-form").classList.toggle("hidden",x!=="run"));
+  }
+}
+$("jump-log").onclick=openPrescribedLogger;
+if($("strength-session-select"))$("strength-session-select").onchange=e=>showStrengthSession(e.target.value);
+
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>gotoPage(t.dataset.target));
+if($("open-workout-library")) $("open-workout-library").onclick=()=>gotoPage("library");
+if($("close-workout-library")) $("close-workout-library").onclick=()=>gotoPage("plan");
+document.querySelectorAll(".sport-btn").forEach(b=>b.onclick=()=>{
+  ["run","bike","strength","other"].forEach(x=>$(x+"-form").classList.toggle("hidden",x!==b.dataset.sport));
+  if(b.dataset.sport==="strength") showStrengthSession($("strength-session-select")?.value||"A");
+});
+$("save-run").onclick=()=>saveActivity({sport:"run",name:$("run-name").value.trim()||"Run",duration_sec:num("run-duration")===null?null:Math.round(num("run-duration")*60),distance_m:num("run-distance")===null?null:num("run-distance")*1000,avg_hr:num("run-hr"),avg_pace_sec_per_km:paceSeconds($("run-pace").value.trim()),avg_cadence:num("run-cadence"),elevation_gain_m:num("run-elev"),rpe:num("run-rpe")});
+$("save-bike").onclick=()=>saveActivity({sport:"bike",name:$("bike-name").value.trim()||"Bike Ride",duration_sec:num("bike-duration")===null?null:Math.round(num("bike-duration")*60),distance_m:num("bike-distance")===null?null:num("bike-distance")*1000,avg_hr:num("bike-hr"),avg_power:num("bike-power"),normalized_power:num("bike-np"),avg_cadence:num("bike-cadence"),elevation_gain_m:num("bike-elev"),rpe:num("bike-rpe")});
+
+$("save-other").onclick=()=>saveActivity({
+  sport:"other",
+  name:$("other-name").value.trim()||"Other Activity",
+  duration_sec:num("other-duration")===null?null:Math.round(num("other-duration")*60),
+  avg_hr:num("other-hr"),
+  max_hr:num("other-maxhr"),
+  calories:num("other-calories"),
+  rpe:num("other-rpe"),
+  raw_data:{
+    planned:false,
+    category:$("other-category").value,
+    muscular_load:$("other-muscular-load").value,
+    notes:$("other-notes").value.trim()
+  }
+});
+
+if($("save-cs")) $("save-cs").onclick=saveCS;
+if($("run-library-filter")) $("run-library-filter").onchange=renderRunLibrary;
+if($("run-library-duration")) $("run-library-duration").onchange=renderRunLibrary;
+
+
+
+async function loadStravaStatus(){
+  if(!currentUser)return;
+  const {data,error}=await supabase.from("strava_connections")
+    .select("athlete_name,athlete_id,last_sync_at,connected_at")
+    .eq("user_id",currentUser.id).maybeSingle();
+  const pill=$("strava-pill"), text=$("strava-status-text"), line=$("strava-integration-line");
+  if(error){
+    if(pill)pill.textContent="ERROR";
+    if(text)text.textContent="Could not read Strava connection status.";
+    if(line)line.textContent="Status unavailable";
+    return;
+  }
+  if(!data){
+    if(pill)pill.textContent="NOT CONNECTED";
+    if(text)text.textContent="Connect Strava to automatically import rides and runs into AthleteOS.";
+    if(line)line.textContent="Not connected";
+    if($("connect-strava"))$("connect-strava").classList.remove("hidden");
+    if($("sync-strava"))$("sync-strava").classList.add("hidden");
+    if($("strava-last-sync"))$("strava-last-sync").textContent="";
+    return;
+  }
+  if(pill)pill.textContent="CONNECTED";
+  if(text)text.textContent=`Connected${data.athlete_name?` as ${data.athlete_name}`:""}. New activities can be pulled directly from Strava.`;
+  if(line)line.textContent="Connected · automatic/manual import available";
+  if($("connect-strava"))$("connect-strava").classList.add("hidden");
+  if($("sync-strava"))$("sync-strava").classList.remove("hidden");
+  if($("strava-last-sync"))$("strava-last-sync").textContent=data.last_sync_at
+    ? `Last Strava sync: ${new Date(data.last_sync_at).toLocaleString()}`
+    : "Connected · no activity sync completed yet";
+}
+async function connectStrava(){
+  if($("strava-action-status")) status($("strava-action-status"),"Preparing Strava authorization…",true);
+  const {data,error}=await supabase.functions.invoke("strava-connect",{body:{redirect_url:window.location.origin+window.location.pathname}});
+  if(error || !data?.url){
+    const msg=data?.error||error?.message||"Could not start Strava connection.";
+    if($("strava-action-status")) status($("strava-action-status"),msg);
+    return;
+  }
+  window.location.href=data.url;
+}
+async function syncStrava(){
+  if($("strava-action-status")) status($("strava-action-status"),"Syncing Strava activities…",true);
+  const {data,error}=await supabase.functions.invoke("strava-sync",{body:{}});
+  if(error){
+    if($("strava-action-status")) status($("strava-action-status"),error.message||"Strava sync failed.");
+    return;
+  }
+  if(data?.error){
+    if($("strava-action-status")) status($("strava-action-status"),data.error);
+    return;
+  }
+  if($("strava-action-status")) status($("strava-action-status"),`Strava sync complete · ${data?.imported??0} recent activities checked/imported ✓`,true);
+  await Promise.all([loadHistory(),loadStravaStatus(),loadUnplannedLoad()]);
+}
+function handleStravaReturn(){
+  const u=new URL(window.location.href);
+  const s=u.searchParams.get("strava");
+  if(!s)return;
+  const imported=u.searchParams.get("imported");
+  const message=u.searchParams.get("message");
+  if(s==="connected"){
+    if($("strava-action-status"))status($("strava-action-status"),`Strava connected${imported?` · ${imported} recent activities imported`:""} ✓`,true);
+    loadHistory();loadStravaStatus();
+  }else if(s==="error"){
+    if($("strava-action-status"))status($("strava-action-status"),message||"Strava connection failed.");
+  }
+  u.searchParams.delete("strava");u.searchParams.delete("imported");u.searchParams.delete("message");
+  history.replaceState({},document.title,u.pathname+u.search+u.hash);
+}
+
+let activeBenchmarkType=null;
+function simpleHrDrift(h1,h2){
+  h1=Number(h1);h2=Number(h2);
+  if(!h1||!h2)return null;
+  return ((h2-h1)/h1)*100;
+}
+function benchmarkLabel(t){
+  return {run_drift:"Run Aerobic Drift",bike_drift:"Bike Aerobic Drift",ftp:"FTP Benchmark",cs:"Critical Speed Benchmark"}[t]||"Benchmark";
+}
+function openBenchmark(t){
+  activeBenchmarkType=t;
+  $("benchmark-entry-card").classList.remove("hidden");
+  $("benchmark-entry-title").textContent=benchmarkLabel(t);
+  $("benchmark-date").value=new Date().toISOString().slice(0,10);
+  $("benchmark-output").placeholder=t==="run_drift"?"Treadmill pace (sec/km)":t==="bike_drift"?"Trainer watts":"Optional test output";
+  $("benchmark-result").placeholder=t==="ftp"?"New FTP watts":t==="cs"?"New CS sec/km":"Optional result";
+  updateBenchmarkPreview();
+  $("benchmark-entry-card").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function updateBenchmarkPreview(){
+  const d=simpleHrDrift($("benchmark-hr1")?.value,$("benchmark-hr2")?.value);
+  if(d==null){if($("benchmark-preview"))$("benchmark-preview").innerHTML="Enter first- and second-half HR to calculate simple HR drift.";return}
+  const cls=d<5?"test-pass":d<=7.5?"test-watch":"test-fail";
+  const label=d<5?"PASS — aerobically stable":d<=7.5?"BORDERLINE — hold and reassess":"EXCESS DRIFT — intensity likely too high";
+  $("benchmark-preview").innerHTML=`HR drift: <strong class="${cls}">${d.toFixed(1)}%</strong><br>${label}`;
+}
+async function saveBenchmark(){
+  if(!currentUser||!activeBenchmarkType)return;
+  const d=simpleHrDrift($("benchmark-hr1").value,$("benchmark-hr2").value);
+  const record={
+    user_id:currentUser.id,
+    test_type:activeBenchmarkType,
+    test_date:$("benchmark-date").value,
+    output_value:num("benchmark-output"),
+    first_half_hr:num("benchmark-hr1"),
+    second_half_hr:num("benchmark-hr2"),
+    drift_pct:d,
+    result_value:num("benchmark-result")
+  };
+  let saved=false;
+  const {error}=await supabase.from("benchmark_tests").insert(record);
+  if(error){
+    const key=`athleteos_benchmarks_${currentUser.id}`;
+    const arr=JSON.parse(localStorage.getItem(key)||"[]");arr.push(record);localStorage.setItem(key,JSON.stringify(arr));saved=true;
+    status($("benchmark-status"),"Benchmark saved on this device. Database benchmark table can be enabled next.",true);
+  }else{saved=true;status($("benchmark-status"),"Benchmark saved ✓",true)}
+  if(activeBenchmarkType==="ftp"&&record.result_value){
+    currentFTP=Math.round(record.result_value);
+    if($("ftp-watts"))$("ftp-watts").value=currentFTP;
+  }
+  if(activeBenchmarkType==="cs"&&record.result_value){
+    currentCS=record.result_value;
+    if($("cs-pace"))$("cs-pace").value=paceFmt(currentCS).replace("/km","");
+  }
+  if(saved)loadPerformanceDashboard();
+}
+async function loadPerformanceDashboard(){
+  if($("dash-ftp"))$("dash-ftp").textContent=currentFTP?`${currentFTP} W`:"—";
+  if($("dash-cs"))$("dash-cs").textContent=currentCS?paceFmt(currentCS):"—";
+  if(!currentUser)return;
+  const key=`athleteos_benchmarks_${currentUser.id}`;
+  let tests=JSON.parse(localStorage.getItem(key)||"[]");
+  const {data}=await supabase.from("benchmark_tests").select("*").eq("user_id",currentUser.id).order("test_date",{ascending:false}).limit(20);
+  if(data?.length)tests=data;
+  const run=tests.find(x=>x.test_type==="run_drift");
+  const bike=tests.find(x=>x.test_type==="bike_drift");
+  function paint(test,prefix,unit){
+    if(!test)return;
+    const d=Number(test.drift_pct);
+    const out=Number(test.output_value);
+    const pass=Number.isFinite(d)&&d<5;
+    if($(prefix+"-ae"))$(prefix+"-ae").textContent=out?(unit==="pace"?paceFmt(out):`${Math.round(out)} W`):"Tested";
+    if($(prefix+"-drift"))$(prefix+"-drift").textContent=Number.isFinite(d)?`${d.toFixed(1)}% drift · ${pass?"PASS":"retest/hold"}`:"Drift unavailable";
+  }
+  paint(run,"dash-run","pace");paint(bike,"dash-bike","watts");
+  const latest=tests[0];
+  if(latest&&$("hr-intelligence-summary")){
+    $("hr-intelligence-summary").innerHTML=`<strong>Heart-rate intelligence:</strong><br>Latest benchmark: ${benchmarkLabel(latest.test_type)}${latest.drift_pct!=null?` · ${Number(latest.drift_pct).toFixed(1)}% HR drift`:""}. Continue comparing HR cost against fixed pace/power as data accumulates.`;
+  }
+}
+document.querySelectorAll(".benchmark-log").forEach(b=>b.onclick=()=>openBenchmark(b.dataset.test));
+if($("close-benchmark"))$("close-benchmark").onclick=()=>$("benchmark-entry-card").classList.add("hidden");
+if($("benchmark-hr1"))$("benchmark-hr1").oninput=updateBenchmarkPreview;
+if($("benchmark-hr2"))$("benchmark-hr2").oninput=updateBenchmarkPreview;
+if($("save-benchmark"))$("save-benchmark").onclick=saveBenchmark;
+
+
+if($("refresh-health")) $("refresh-health").onclick=refreshImportedData;
+
+if($("connect-strava")) $("connect-strava").onclick=connectStrava;
+if($("sync-strava")) $("sync-strava").onclick=syncStrava;
+
+const {data:{session}}=await supabase.auth.getSession(); if(session?.user)showApp(session.user);else showAuth();
+</script>
+<script type="module" id="coach-v280-script">
+import {createClient as cvCreateClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const cvdb=cvCreateClient('https://austsxdtggtoyrjpwjbj.supabase.co','sb_publishable_ipEuuZhqgPbL-G1MbLvzgQ_UmKWOngO');
+const cvEsc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cvSeat=v=>{if(!v)return '—';return String(v).split(' — ')[0].replace('Paul Laursen & Martin Buchheit','Laursen / Buchheit').replace('Stephen Seiler','Seiler').replace('Shona Halson','Halson').replace('Bent Rønnestad','Rønnestad').replace('Scott Johnston','Johnston').replace('Øyvind Sandbakk / Bjørn Tønnessen','Sandbakk / Tønnessen')};
+function cvDate(){return new Date().toLocaleDateString('en-CA')}
+function cvShell(){
+ const today=document.querySelector('[data-page="today"]'); if(!today)return null;
+ let c=document.getElementById('coach-v280'); if(c)return c;
+ c=document.createElement('div');c.id='coach-v280';c.innerHTML='<div class="cv-top"><div><div class="section-title">AthleteOS coaching engine</div><div id="cv-title" class="cv-title">Loading today…</div></div><span id="cv-state" class="cv-state cv-green">—</span></div><div id="cv-tags" class="cv-tags"></div><div class="cv-grid"><div class="cv-stat"><span>Duration</span><strong id="cv-duration">—</strong></div><div class="cv-stat"><span>Primary doctrine</span><strong id="cv-seat">—</strong></div></div><div id="cv-why" class="cv-box">Building recommendation from recovery, recent load and Constitution v1.0.</div><div id="cv-change" class="cv-box"></div><details style="margin-top:10px"><summary style="padding:10px 0"><strong>Board & evidence trace</strong></summary><div id="cv-detail" class="cv-detail"></div></details>';
+ const cards=[...today.querySelectorAll(':scope > .card')]; const legacy=cards.find(x=>x.querySelector('.section-title')?.textContent.trim()==='Workout prescription'); if(legacy){today.insertBefore(c,legacy);legacy.dataset.cvLegacy='1'}else today.insertBefore(c,today.children[1]||null);return c;
+}
+async function cvLoad(){
+ const c=cvShell(); if(!c)return;
+ const {data:{session}}=await cvdb.auth.getSession(); if(!session?.user){document.getElementById('cv-title').textContent='Sign in to load coaching';return}
+ const {data,error}=await cvdb.from('coaching_recommendations').select('*').eq('user_id',session.user.id).eq('recommendation_date',cvDate()).order('created_at',{ascending:false}).limit(1).maybeSingle();
+ if(error||!data){document.getElementById('cv-title').textContent='Coaching recommendation unavailable';document.getElementById('cv-why').innerHTML='<span class="cv-error">'+cvEsc(error?.message||'No recommendation has been generated for today yet.')+'</span>';return}
+ const st=String(data.decision_state||'green').toLowerCase(); const sb=document.getElementById('cv-state');sb.textContent=st.toUpperCase();sb.className='cv-state cv-'+st;
+ document.getElementById('cv-title').textContent=data.planned_title||data.recommendation||'Today';document.getElementById('cv-duration').textContent=data.recommended_duration_min!=null?data.recommended_duration_min+' min':'As tolerated';document.getElementById('cv-seat').textContent=cvSeat(data.primary_seat);
+ document.getElementById('cv-tags').innerHTML='<span class="cv-tag">OBJECTIVE: '+cvEsc(String(data.objective||'health').toUpperCase())+'</span><span class="cv-tag">'+cvEsc(data.sport||data.recommendation_type||'training')+'</span><span class="cv-tag">CONSTITUTION v'+cvEsc(data.constitution_version||'1.0')+'</span>';
+ document.getElementById('cv-why').innerHTML='<strong>Why this workout?</strong><br>'+cvEsc(data.why||data.recommendation||'Generated from the coaching engine.');
+ const change=st==='green'?'No recovery-driven reduction today. Follow the health-first prescription and progress only if execution remains controlled.':st==='yellow'?'Today is modified: reduce volume/intensity and keep strength submaximal. The goal is useful training without turning accumulated fatigue into unnecessary stress.':'Today is replaced or heavily reduced: recovery takes priority over performance work.';document.getElementById('cv-change').innerHTML='<strong>What changed?</strong><br>'+change;
+ const inp=data.inputs||{},r=inp.readiness||{},l=inp.recent_load_36h||{},ind=inp.individual_response||{};const sup=(data.supporting_seats||[]).map(cvSeat).join(', ')||'None';let html='<strong>Primary seat:</strong> '+cvEsc(data.primary_seat||'—')+'<br><strong>Supporting seats:</strong> '+cvEsc(sup)+'<br><strong>Evidence tier:</strong> '+cvEsc(data.evidence_tier||'—')+'<br><strong>Objective:</strong> '+cvEsc(data.objective||'health')+'<br><strong>Recent load:</strong> '+(Number.isFinite(Number(l.minutes))?Math.round(Number(l.minutes))+' min / 36h':'—')+(l.max_rpe!=null?' · max RPE '+cvEsc(l.max_rpe):'')+'<br><strong>Recovery:</strong> HRV '+cvEsc(r.hrv_ms??'—')+' · RHR '+cvEsc(r.resting_hr??'—')+' · Body Battery '+cvEsc(r.body_battery??'—')+' · Sleep '+cvEsc(r.sleep_score??'—')+'<br><strong>Individual response:</strong> '+(ind.recent_decoupling_avg_pct!=null?Number(ind.recent_decoupling_avg_pct).toFixed(1)+'% recent decoupling':'baseline building');
+ if(data.individual_override)html+='<div class="cv-override"><strong>Individual-response override active</strong><br>'+cvEsc(data.override_reason||'Your longitudinal response overrode the generic doctrine.')+'</div>';
+ const conflicts=Array.isArray(data.conflicts)?data.conflicts:[];for(const x of conflicts)html+='<div class="cv-conflict"><strong>Board disagreement kept visible</strong><br>'+cvEsc(x.between||'Doctrine conflict')+': '+cvEsc(x.issue||'')+(x.resolution?'<br>'+cvEsc(x.resolution):'')+'</div>';document.getElementById('cv-detail').innerHTML=html;
+ const legacy=document.querySelector('[data-cv-legacy="1"]');if(legacy)legacy.style.display='none';
+}
+function cvHook(){cvShell();cvLoad();document.addEventListener('click',e=>{if(['save-readiness','refresh-health','sync-strava','save-run','save-bike','save-other','save-strength'].includes(e.target?.id))setTimeout(cvLoad,900)},true);cvdb.auth.onAuthStateChange(()=>setTimeout(cvLoad,150));}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(cvHook,250));else setTimeout(cvHook,250);
+</script>
+<style id="strength-v286-style">
+.strength-block{margin-top:12px;border:1px solid #2a313a;border-radius:14px;padding:12px;background:#171d24}.strength-block-title{font-size:11px;font-weight:900;letter-spacing:.08em;color:#9ca6b3;margin-bottom:8px}.strength-pair{display:grid;gap:9px}.set-row{grid-template-columns:34px 1fr 1fr 1fr 54px!important}.set-head{grid-template-columns:34px 1fr 1fr 1fr 54px!important}.set-done{margin:0!important;padding:8px 4px!important;border-radius:9px!important;font-size:11px!important;background:#253240!important;color:#eef5ff!important}.set-done.done{background:#183a2a!important;color:#79dda3!important}.rest-timer{position:fixed;left:50%;transform:translateX(-50%);bottom:82px;width:min(398px,calc(100% - 24px));z-index:50;background:#171d24;border:1px solid #384554;border-radius:16px;padding:10px 12px;box-shadow:0 10px 30px #0008;display:none}.rest-timer.show{display:block}.rest-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.rest-time{font-size:28px;font-weight:950;font-variant-numeric:tabular-nums}.rest-sub{font-size:11px;color:#9ca6b3}.rest-actions{display:flex;gap:6px}.rest-actions button{width:auto!important;margin:0!important;padding:8px 10px!important}.rest-ready{border-color:#67d39b;background:#10271d}.strength-tip{font-size:11px;line-height:1.45;color:#9ca6b3;margin:8px 0 2px;padding:9px 10px;border-radius:10px;background:#222a35}.strength-session.hidden{display:none!important}.strength-session .exercise{margin-top:8px}.strength-session h4{margin:0 0 4px}.timer-note{font-size:10px;color:#9ca6b3;margin-top:5px}
+</style>
+<div id="rest-timer" class="rest-timer"><div class="rest-row"><div><div class="rest-sub">REST TIMER</div><div id="rest-time" class="rest-time">1:30</div><div id="rest-label" class="rest-sub">Next set in 90 seconds</div></div><div class="rest-actions"><button id="rest-add" class="secondary">+30s</button><button id="rest-skip" class="secondary">Skip</button></div></div></div>
+<script type="module" id="strength-v286-script">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db=createClient('https://austsxdtggtoyrjpwjbj.supabase.co','sb_publishable_ipEuuZhqgPbL-G1MbLvzgQ_UmKWOngO');
+const q=id=>document.getElementById(id);let sessionStartedAt=null,restEnd=0,restTick=null,audioCtx=null;
+const programs={
+ A:{title:'Workout A — Push Focus',focus:'push',blocks:[
+  ['A · PRIMARY — NOT A SUPERSET',[['bench-press','Bench Press',3,5,null]]],
+  ['B · PRESS + BACK BALANCE',[['overhead-press','Overhead Press',3,6,null],['seated-cable-row','Seated Cable Row',3,8,null]]],
+  ['C · SECONDARY PRESS + CORE',[['incline-dumbbell-press','Incline Dumbbell Press',2,10,null],['pallof-press','Pallof Press',2,10,null]]],
+  ['D · ARM SUPERSET',[['biceps-curl','Biceps Curl',2,12,null],['triceps-extension','Triceps Extension',2,12,null]]]
+ ]},
+ B:{title:'Workout B — Pull Focus',focus:'pull',blocks:[
+  ['A · PRIMARY — NOT A SUPERSET',[['pull-down','Pull-Up / Lat Pulldown',3,6,null]]],
+  ['B · HORIZONTAL PULL + PUSH BALANCE',[['seated-cable-row','Seated Cable Row',3,8,null],['push-up','Push-Up',2,12,null]]],
+  ['C · POSTERIOR CHAIN + CORE',[['romanian-deadlift','Romanian Deadlift',3,6,null],['dead-bug','Dead Bug',2,10,null]]],
+  ['D · ARM SUPERSET',[['biceps-curl','Biceps Curl',2,12,null],['triceps-extension','Triceps Extension',2,12,null]]]
+ ]},
+ C:{title:'Workout C — Legs',focus:'legs',blocks:[
+  ['A · LOW-VOLUME POWER',[['box-jump','Box Jump',3,3,null]]],
+  ['B · PRIMARY — NOT A SUPERSET',[['back-squat','Back Squat',3,5,null]]],
+  ['C · UNILATERAL + HAMSTRINGS',[['bulgarian-split-squat','Bulgarian Split Squat',3,8,null],['hamstring-curl','Hamstring Curl',3,10,null]]],
+  ['D · LOWER-LEG SUPERSET',[['standing-calf-raise','Standing Calf Raise',3,10,null],['soleus-raise','Soleus Raise',3,12,null]]],
+  ['E · ARM SUPERSET',[['biceps-curl','Biceps Curl',2,12,null],['triceps-extension','Triceps Extension',2,12,null]]],
+  ['F · CORE',[['ab-wheel','Ab Wheel',2,8,null]]]
+ ]},
+ D:{title:'Workout D — Full Body (Optional)',focus:'full_body_optional',blocks:[
+  ['A · PRIMARY — NOT A SUPERSET',[['trap-bar-deadlift','Trap-Bar Deadlift',3,5,175]]],
+  ['B · UNILATERAL + UPPER PUSH',[['step-up','Step-Up',2,8,null],['incline-dumbbell-press','Incline Dumbbell Press',2,10,null]]],
+  ['C · UPPER PULL + HIP EXTENSION',[['seated-cable-row','Seated Cable Row',2,10,null],['hip-thrust','Hip Thrust',2,8,null]]],
+  ['D · ARM SUPERSET',[['biceps-curl','Biceps Curl',2,12,null],['triceps-extension','Triceps Extension',2,12,null]]],
+  ['E · CORE',[['dead-bug','Dead Bug',2,10,null]]]
+ ]}
+};
+function fid(k,slug,t,i){return k+'-'+slug.replace(/[^a-z0-9]+/gi,'-')+'-'+t+i}
+function exHtml(k,e){var slug=e[0],name=e[1],sets=e[2],reps=e[3],target=e[4],rows='';for(var i=1;i<=sets;i++){rows+='<div class="set-row"><span>'+i+'</span><input id="'+fid(k,slug,'w',i)+'" inputmode="decimal" placeholder="lb"'+(target!=null?' value="'+target+'"':'')+'><input id="'+fid(k,slug,'r',i)+'" inputmode="numeric" value="'+reps+'"><input id="'+fid(k,slug,'e',i)+'" inputmode="decimal" placeholder="RPE"><button type="button" class="set-done" data-exercise="'+name+'">Done</button></div>'}var side=['bulgarian-split-squat','rear-foot-elevated-split-squat','step-up','pallof-press','dead-bug'].includes(slug)?' / side':'';var note=slug==='push-up'?'2 × 10–15 · stop ~2 reps before failure':sets+' × '+reps+side;return '<div class="exercise" data-slug="'+slug+'"><h4>'+name+'</h4><div class="note">'+note+'</div><div class="set-row set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span><span>Done</span></div>'+rows+'</div>'}
+function sessionHtml(k){var p=programs[k],optional=k==='D'?'<div class="strength-tip"><strong>Optional session:</strong> use only on GREEN readiness with low residual leg fatigue. Recovery remains the default.</div>':'',out='<div id="strength-'+k+'" class="strength-session '+(k==='A'?'':'hidden')+'>'+optional+'<div class="strength-tip">Alternate exercises only inside paired blocks. Complete PRIMARY blocks by themselves with 2–3 minutes of rest. Tap Done after every set; add 30 seconds to the timer as needed.</div>';p.blocks.forEach(function(b){out+='<div class="strength-block"><div class="strength-block-title">'+b[0]+'</div><div class="strength-pair">';b[1].forEach(function(e){out+=exHtml(k,e)});out+='</div></div>'});return out+'</div>'}
+function rebuild(){var form=q('strength-form');if(!form)return;form.innerHTML='<div class="row"><div><h3 id="strength-form-title">'+programs.A.title+'</h3><div class="note" id="strength-form-note">Three base sessions plus one optional full-body day. Log load, reps and RPE for progression.</div></div><span class="pill" id="strength-session-pill">A</span></div><select id="strength-session-select"><option value="A">Workout A — Push Focus</option><option value="B">Workout B — Pull Focus</option><option value="C">Workout C — Legs</option><option value="D">Workout D — Full Body (Optional)</option></select>'+sessionHtml('A')+sessionHtml('B')+sessionHtml('C')+sessionHtml('D')+'<button id="save-strength">Save Strength Session</button><div class="timer-note">90-second timer starts automatically when a set is marked Done. Primary lifts should generally use 2–3 minutes.</div>';q('strength-session-select').onchange=function(e){show(e.target.value)};q('save-strength').onclick=saveStrength;form.addEventListener('click',function(e){var b=e.target.closest('.set-done');if(!b)return;b.classList.add('done');b.textContent='✓';startRest(b.dataset.exercise+' complete')})}
+function show(k){['A','B','C','D'].forEach(function(x){var el=q('strength-'+x);if(el)el.classList.toggle('hidden',x!==k)});q('strength-session-pill').textContent=k;q('strength-form-title').textContent=programs[k].title;if(!sessionStartedAt)sessionStartedAt=new Date().toISOString()}
+function fmt(ms){var s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function alertReady(){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();[0,180,360].forEach(function(ms){setTimeout(function(){var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=880;g.gain.value=.08;o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.12)},ms)})}catch(e){}try{if(navigator.vibrate)navigator.vibrate([250,100,250])}catch(e){}try{if('Notification'in window&&Notification.permission==='granted')new Notification('AthleteOS',{body:'90 seconds complete — next set.'})}catch(e){}}
+function drawRest(){var box=q('rest-timer'),time=q('rest-time'),lab=q('rest-label');if(!box||!time)return;var left=restEnd-Date.now();time.textContent=fmt(left);if(left<=0){clearInterval(restTick);restTick=null;box.classList.add('rest-ready');lab.textContent='Ready — time for the next set';alertReady()}else{box.classList.remove('rest-ready');lab.textContent='Next set in '+Math.ceil(left/1000)+' seconds'}}
+function startRest(label){restEnd=Date.now()+90000;q('rest-timer').classList.add('show');q('rest-label').textContent=label;clearInterval(restTick);restTick=setInterval(drawRest,250);drawRest();try{if('Notification'in window&&Notification.permission==='default')Notification.requestPermission().catch(function(){})}catch(e){}}
+async function exerciseId(slug){var r=await db.from('exercise_library').select('id').eq('slug',slug).limit(1).single();if(r.error)throw r.error;return r.data.id}
+function n(id){var el=q(id),v=el&&el.value!=null?el.value.trim():'';return v===''?null:Number(v)}
+async function saveStrength(){var auth=await db.auth.getSession(),session=auth.data.session;if(!session)return alert('Please sign in again.');var k=q('strength-session-select').value,p=programs[k],end=new Date(),start=sessionStartedAt?new Date(sessionStartedAt):new Date(end.getTime()-30*60000);var sr=await db.from('strength_sessions').insert({user_id:session.user.id,session_date:new Date().toLocaleDateString('en-CA'),title:p.title,focus:p.focus,started_at:start.toISOString(),completed_at:end.toISOString(),duration_sec:Math.max(1,Math.round((end-start)/1000))}).select('id').single();if(sr.error)return alert(sr.error.message);var rows=[];for(var bi=0;bi<p.blocks.length;bi++){for(var ei=0;ei<p.blocks[bi][1].length;ei++){var e=p.blocks[bi][1][ei],slug=e[0],sets=e[2],reps=e[3],target=e[4],id;try{id=await exerciseId(slug)}catch(err){continue}for(var i=1;i<=sets;i++){var rr=n(fid(k,slug,'r',i));rows.push({user_id:session.user.id,session_id:sr.data.id,exercise_id:id,set_number:i,target_weight:target,target_reps:reps,actual_weight:n(fid(k,slug,'w',i)),actual_reps:rr,rpe:n(fid(k,slug,'e',i)),completed:rr!=null})}}}if(rows.length){var rr2=await db.from('strength_sets').insert(rows);if(rr2.error)return alert(rr2.error.message)}alert(p.title+' saved ✓');sessionStartedAt=null;var hist=document.querySelector('[data-target="history"]');if(hist)hist.click()}
+document.addEventListener('click',function(e){if(e.target&&e.target.id==='rest-skip'){clearInterval(restTick);restTick=null;q('rest-timer').classList.remove('show')}if(e.target&&e.target.id==='rest-add'){restEnd=Math.max(restEnd,Date.now())+30000;drawRest()}if(e.target&&e.target.classList&&e.target.classList.contains('sport-btn')&&e.target.dataset.sport==='strength'&&!sessionStartedAt)sessionStartedAt=new Date().toISOString();if(e.target&&e.target.id==='jump-log')setTimeout(function(){if(q('strength-form')&&!q('strength-form').classList.contains('hidden')&&!sessionStartedAt)sessionStartedAt=new Date().toISOString()},80)},true);document.addEventListener('visibilitychange',function(){if(!document.hidden&&restEnd)drawRest()});
+function boot(){rebuild();show('A');var top=document.querySelector('.top small');if(top)top.textContent='v2.8.6 · Canonical Strength Workouts';document.title='AthleteOS v2.8.6'}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(boot,300)});else setTimeout(boot,300);
+</script>
+<style>.program-day{background:#1b2027;border:1px solid #2a313a;border-radius:13px;padding:11px;margin-top:8px}.program-day .metric-grid{margin-top:8px}</style><script type="module">import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db=createClient('https://austsxdtggtoyrjpwjbj.supabase.co','sb_publishable_ipEuuZhqgPbL-G1MbLvzgQ_UmKWOngO');
+const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const sports=['run','bike','swim','strength'];
+const names={run:'Running',bike:'Cycling',swim:'Swimming',strength:'Strength'};
+const $=id=>document.getElementById(id);
+function add(){if(document.querySelector('[data-page="program"]'))return;const main=document.getElementById('main');if(!main)return;const s=document.createElement('section');s.dataset.page='program';s.className='hidden';let h='<div class="card"><div class="section-title">Program setup</div><h2>Build My Training Week</h2><div class="note">Flexible schedule, sport-specific experience and weekly capacity.</div></div>';h+='<div class="card"><div class="section-title">Objective & capacity</div><div class="metric-grid"><div><select id="pg-objective"><option value="health">Health & longevity</option><option value="performance">Performance</option></select></div><div><select id="pg-overall"><option value="beginner">Beginner</option><option value="recreational">Recreational</option><option value="trained">Trained</option><option value="advanced">Advanced</option></select></div><div><input id="pg-hours" type="number" step=".5" placeholder="Weekly hours"></div><div><input id="pg-sessions" type="number" placeholder="Sessions / week"></div><div><input id="pg-weekday" type="number" placeholder="Weekday max min"></div><div><input id="pg-weekend" type="number" placeholder="Weekend max min"></div></div><select id="pg-longday">'+days.map((d,i)=>'<option value="'+i+'">Long session: '+d+'</option>').join('')+'</select><label style="display:flex;gap:8px;align-items:center"><input id="pg-doubles" type="checkbox" style="width:auto"> Allow double-session days</label></div>';h+='<div class="card"><div class="section-title">Availability</div><div id="pg-days"></div></div><div class="card"><div class="section-title">Sport-specific experience</div><div id="pg-sports"></div></div><div class="card"><div class="section-title">Program preview</div><div id="pg-preview" class="hr-callout"></div><button id="pg-save">Save Program Setup</button><div id="pg-status" class="status"></div></div>';s.innerHTML=h;main.appendChild(s);days.forEach((d,i)=>{const x=document.createElement('div');x.className='program-day';x.innerHTML='<div class="row"><strong>'+d+'</strong><label><input id="pg-day-'+i+'" type="checkbox" style="width:auto" checked> Available</label></div><input id="pg-day-min-'+i+'" type="number" placeholder="Max minutes">';$('pg-days').appendChild(x)});sports.forEach(sp=>{const x=document.createElement('div');x.className='program-day';x.innerHTML='<strong>'+names[sp]+'</strong><div class="metric-grid"><select id="pg-level-'+sp+'"><option value="beginner">Beginner</option><option value="recreational">Recreational</option><option value="trained">Trained</option><option value="advanced">Advanced</option></select><input id="pg-age-'+sp+'" type="number" placeholder="Training age months"><input id="pg-freq-'+sp+'" type="number" step=".5" placeholder="Sessions/wk"><input id="pg-min-'+sp+'" type="number" placeholder="Minutes/wk"></div>';$('pg-sports').appendChild(x)});$('pg-save').onclick=save;document.querySelectorAll('#pg-days input,#pg-sports input,#pg-sports select,#pg-hours,#pg-sessions,#pg-longday').forEach(x=>x.addEventListener('input',preview));const tabs=document.getElementById('tabs');tabs.style.gridTemplateColumns='repeat(6,1fr)';const t=document.createElement('div');t.className='tab';t.dataset.target='program';t.innerHTML='<b>⚙</b>Program';t.onclick=()=>{document.querySelectorAll('[data-page]').forEach(p=>p.classList.add('hidden'));s.classList.remove('hidden');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');load()};tabs.appendChild(t);load();preview();const top=document.querySelector('.top small');if(top)top.textContent='v3.0 · Flexible Program Builder';document.title='AthleteOS v3.0';}
+function val(id){const v=$(id)?.value;return v===''||v==null?null:Number(v)}
+async function load(){const g=await db.auth.getSession();const u=g.data.session?.user;if(!u)return;const [a,b,c]=await Promise.all([db.from('athlete_program_settings').select('*').eq('user_id',u.id).maybeSingle(),db.from('athlete_sport_profiles').select('*').eq('user_id',u.id),db.from('athlete_availability').select('*').eq('user_id',u.id)]);const p=a.data;if(p){$('pg-objective').value=p.primary_objective||'health';$('pg-overall').value=p.experience_overall||'recreational';$('pg-hours').value=p.weekly_hours_target??'';$('pg-sessions').value=p.weekly_sessions_target??'';$('pg-weekday').value=p.weekday_max_minutes??'';$('pg-weekend').value=p.weekend_max_minutes??'';$('pg-longday').value=p.long_session_day??6;$('pg-doubles').checked=!!p.doubles_allowed}(b.data||[]).forEach(x=>{if(!sports.includes(x.sport))return;$('pg-level-'+x.sport).value=x.experience_level;$('pg-age-'+x.sport).value=x.training_age_months??'';$('pg-freq-'+x.sport).value=x.sessions_per_week_target??'';$('pg-min-'+x.sport).value=x.weekly_minutes_target??''});(c.data||[]).forEach(x=>{if($('pg-day-'+x.weekday))$('pg-day-'+x.weekday).checked=x.available!==false;if($('pg-day-min-'+x.weekday))$('pg-day-min-'+x.weekday).value=x.max_minutes??''});preview()}
+async function save(){const g=await db.auth.getSession();const u=g.data.session?.user;if(!u)return;const set={user_id:u.id,primary_objective:$('pg-objective').value,experience_overall:$('pg-overall').value,weekly_hours_target:val('pg-hours'),weekly_sessions_target:val('pg-sessions'),doubles_allowed:$('pg-doubles').checked,long_session_day:val('pg-longday'),weekday_max_minutes:val('pg-weekday'),weekend_max_minutes:val('pg-weekend'),updated_at:new Date().toISOString()};const spr=sports.map(sp=>({user_id:u.id,sport:sp,experience_level:$('pg-level-'+sp).value,training_age_months:val('pg-age-'+sp),sessions_per_week_target:val('pg-freq-'+sp),weekly_minutes_target:val('pg-min-'+sp),updated_at:new Date().toISOString()}));const av=days.map((d,i)=>({user_id:u.id,weekday:i,window_label:'primary',available:$('pg-day-'+i).checked,max_minutes:val('pg-day-min-'+i),preferred:false,updated_at:new Date().toISOString()}));const [a,b,c]=await Promise.all([db.from('athlete_program_settings').upsert(set,{onConflict:'user_id'}),db.from('athlete_sport_profiles').upsert(spr,{onConflict:'user_id,sport'}),db.from('athlete_availability').upsert(av,{onConflict:'user_id,weekday,window_label'})]);const e=a.error||b.error||c.error;$('pg-status').textContent=e?e.message:'Program setup saved ✓';$('pg-status').className='status '+(e?'warn':'good');preview()}
+function preview(){if(!$('pg-preview'))return;const av=days.filter((d,i)=>$('pg-day-'+i)?.checked);const mix=sports.map(sp=>names[sp]+': '+($('pg-freq-'+sp)?.value||'—')+' /wk · '+($('pg-level-'+sp)?.value||'beginner')).join('<br>');$('pg-preview').innerHTML='<strong>'+($('pg-hours')?.value||'—')+' hr/week · '+($('pg-sessions')?.value||'—')+' sessions</strong><br>'+av.length+' available days · long session '+days[Number($('pg-longday')?.value||6)]+'<br><br>'+mix+'<br><br><span class="note">Level controls complexity and starting dose. HRV/sleep/RHR modify readiness today, not experience level.</span>'}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(add,500));else setTimeout(add,500);</script>
+<style>.est-box{margin-top:12px;padding:11px;border-radius:12px;background:#10151b;border:1px solid #33404e}.est-score{font-size:12px;color:#9ca6b3;margin-top:5px}.est-why{font-size:11px;line-height:1.5;color:#9ca6b3}.est-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.est-actions button{margin-top:6px}.level-badge{display:inline-block;padding:4px 7px;border-radius:999px;background:#222a35;font-size:10px;font-weight:900}</style><script type="module">import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db=createClient('https://austsxdtggtoyrjpwjbj.supabase.co','sb_publishable_ipEuuZhqgPbL-G1MbLvzgQ_UmKWOngO');
+const sports=['run','bike','swim','strength'];
+const labels={run:'Running',bike:'Cycling',swim:'Swimming',strength:'Strength'};
+const $=id=>document.getElementById(id);
+function scoreAge(m){m=Number(m)||0;return m>=24?20:m>=12?16:m>=6?12:m>=3?7:m>0?3:0}
+function scoreConsistency(count){return count>=24?30:count>=16?24:count>=8?16:count>=4?9:count>0?4:0}
+function scoreVolume(s,min){min=Number(min)||0;const t={run:[60,120,180],bike:[90,180,300],swim:[45,90,150],strength:[45,90,135]}[s];return min>=t[2]?25:min>=t[1]?18:min>=t[0]?10:min>0?5:0}
+function level(score){return score>=70?'advanced':score>=50?'trained':score>=25?'recreational':'beginner'}
+function benchmarkScore(s,ctx){let pts=0,label='No benchmark available';if(s==='bike'){const ftp=Number(ctx.ftp)||0,w=Number(ctx.weight)||0;if(ftp&&w){const wpkg=ftp/(w*0.45359237);pts=wpkg>=3.5?25:wpkg>=3?20:wpkg>=2.5?15:wpkg>=2?10:5;label='FTP '+ftp+' W · '+wpkg.toFixed(2)+' W/kg'}else if(ftp){pts=15;label='FTP '+ftp+' W (weight unavailable)'}}else if(s==='run'){const m=Number(ctx.fivek)||0;if(m){pts=m<20?25:m<23?20:m<27?15:m<32?10:5;label='5K benchmark '+m.toFixed(1)+' min'}}else if(s==='swim'){const p=Number(ctx.swim100)||0;if(p){pts=p<=90?25:p<=105?20:p<=120?15:p<=135?10:5;label='100 m benchmark '+p.toFixed(0)+' sec'}}else if(s==='strength'){const c=Number(ctx.strengthSessions)||0;pts=c>=24?25:c>=16?20:c>=8?15:c>=4?10:c>0?5:0;label=c+' logged strength sessions'}return {pts,label}}
+function confidence(parts){const n=parts.filter(Boolean).length;return n>=4?'high':n>=3?'medium':'low'}
+function addEstimatorUI(){const wrap=$('pg-sports');if(!wrap||wrap.dataset.estimatorReady)return;wrap.dataset.estimatorReady='1';const cards=[...wrap.querySelectorAll('.program-day')];cards.forEach((card,i)=>{const s=sports[i];if(!s)return;const box=document.createElement('div');box.className='est-box';box.id='est-'+s;box.innerHTML='<div class="row"><div><div class="section-title" style="margin-bottom:3px">Automatic level estimate</div><strong id="est-level-'+s+'">Not estimated</strong></div><span class="level-badge" id="est-confidence-'+s+'">—</span></div><div class="est-score" id="est-score-'+s+'"></div><details><summary style="padding:8px 0"><strong>Why?</strong></summary><div class="est-why" id="est-why-'+s+'">Run the estimator to see the inputs.</div></details><div class="est-actions"><button class="secondary est-run" data-sport="'+s+'">Estimate</button><button class="secondary est-use" data-sport="'+s+'">Use estimate</button></div>';card.appendChild(box)});const all=document.createElement('button');all.id='est-all';all.className='secondary';all.textContent='Estimate All Sports';wrap.parentElement.insertBefore(all,wrap);all.onclick=estimateAll;wrap.addEventListener('click',e=>{const r=e.target.closest('.est-run');if(r)estimateSport(r.dataset.sport);const u=e.target.closest('.est-use');if(u)useEstimate(u.dataset.sport)})}
+async function gather(){const g=await db.auth.getSession();const u=g.data.session?.user;if(!u)throw new Error('Sign in required');const since=new Date(Date.now()-84*86400000).toISOString();const [acts,sess,prof,read,sp]=await Promise.all([db.from('activities').select('sport,duration_sec,distance_m,started_at').eq('user_id',u.id).gte('started_at',since),db.from('strength_sessions').select('id,session_date').eq('user_id',u.id).gte('session_date',since.slice(0,10)),db.from('profiles').select('*').eq('id',u.id).maybeSingle(),db.from('readiness_daily').select('weight_lb,date').eq('user_id',u.id).not('weight_lb','is',null).order('date',{ascending:false}).limit(1).maybeSingle(),db.from('athlete_sport_profiles').select('*').eq('user_id',u.id)]);return {u,acts:acts.data||[],strength:sess.data||[],profile:prof.data||{},weight:read.data?.weight_lb,sp:sp.data||[]}}
+function recentFiveK(acts){let best=null;acts.filter(a=>a.sport==='run').forEach(a=>{const km=(Number(a.distance_m)||0)/1000,sec=Number(a.duration_sec)||0;if(km>=4.5&&km<=5.5&&sec>0){const est=sec/km*5/60;if(!best||est<best)best=est}});return best}
+async function estimateSport(s,ctx=null){ctx=ctx||await gather();const profile=ctx.sp.find(x=>x.sport===s)||{};const age=Number(profile.training_age_months)||0;let rows=ctx.acts.filter(a=>a.sport===s);let count=rows.length,mins=rows.reduce((sum,a)=>sum+(Number(a.duration_sec)||0)/60,0)/12;if(s==='strength'){count=ctx.strength.length;mins=Math.max(mins,count*45/12)}const agePts=scoreAge(age),consPts=scoreConsistency(count),volPts=scoreVolume(s,mins);const bench=profile.benchmark||{};const b=benchmarkScore(s,{ftp:bench.ftp_watts||ctx.profile.ftp_watts,weight:ctx.weight,fivek:bench.recent_5k_min||recentFiveK(ctx.acts),swim100:bench.pace_100m_sec,strengthSessions:ctx.strength.length});let total=agePts+consPts+volPts+b.pts;const lvl=level(total);const conf=confidence([age>0,count>=4,mins>0,b.pts>0]);const why={training_age_months:age,training_age_points:agePts,recent_12wk_sessions:count,consistency_points:consPts,avg_weekly_minutes:Math.round(mins),volume_points:volPts,benchmark:b.label,benchmark_points:b.pts,score:total,level:lvl,confidence:conf};$('est-level-'+s).textContent=lvl.toUpperCase();$('est-confidence-'+s).textContent=conf.toUpperCase()+' CONFIDENCE';$('est-score-'+s).textContent='Score '+total+'/100';$('est-why-'+s).innerHTML='Training age: <strong>'+age+' mo</strong> ('+agePts+' pts)<br>Recent consistency: <strong>'+count+' sessions / 12 wk</strong> ('+consPts+' pts)<br>Average volume: <strong>'+Math.round(mins)+' min/wk</strong> ('+volPts+' pts)<br>Benchmark: <strong>'+b.label+'</strong> ('+b.pts+' pts)<br><br><span class="note">Readiness metrics such as HRV, sleep and resting HR are deliberately excluded from this level score.</span>';const g=await db.auth.getSession();const u=g.data.session?.user;if(u)await db.from('athlete_sport_profiles').upsert({user_id:u.id,sport:s,estimated_level:lvl,estimator_score:total,estimator_confidence:conf,estimator_rationale:why,estimator_updated_at:new Date().toISOString()},{onConflict:'user_id,sport'});return {lvl,total,conf}}
+async function estimateAll(){const btn=$('est-all');if(btn)btn.textContent='Estimating…';try{const ctx=await gather();for(const s of sports)await estimateSport(s,ctx);if(btn)btn.textContent='Re-estimate All Sports'}catch(e){if(btn)btn.textContent=e.message||'Estimator error'}}
+async function useEstimate(s){const g=await db.auth.getSession();const u=g.data.session?.user;if(!u)return;const r=await db.from('athlete_sport_profiles').select('estimated_level').eq('user_id',u.id).eq('sport',s).maybeSingle();const lvl=r.data?.estimated_level;if(!lvl)return;await db.from('athlete_sport_profiles').update({experience_level:lvl,manual_level_override:false,updated_at:new Date().toISOString()}).eq('user_id',u.id).eq('sport',s);const sel=$('pg-level-'+s);if(sel)sel.value=lvl;const st=$('pg-status');if(st){st.textContent=labels[s]+' level set to '+lvl+' ✓';st.className='status good'}}
+async function restore(){const g=await db.auth.getSession();const u=g.data.session?.user;if(!u)return;const r=await db.from('athlete_sport_profiles').select('sport,estimated_level,estimator_score,estimator_confidence,estimator_rationale').eq('user_id',u.id);(r.data||[]).forEach(x=>{if(!sports.includes(x.sport)||!x.estimated_level)return;const s=x.sport;if($('est-level-'+s))$('est-level-'+s).textContent=x.estimated_level.toUpperCase();if($('est-confidence-'+s))$('est-confidence-'+s).textContent=(x.estimator_confidence||'low').toUpperCase()+' CONFIDENCE';if($('est-score-'+s))$('est-score-'+s).textContent='Score '+Math.round(Number(x.estimator_score)||0)+'/100';const y=x.estimator_rationale||{};if($('est-why-'+s)&&y.score!=null)$('est-why-'+s).innerHTML='Training age: <strong>'+(y.training_age_months??'—')+' mo</strong><br>Recent consistency: <strong>'+(y.recent_12wk_sessions??'—')+' sessions / 12 wk</strong><br>Average volume: <strong>'+(y.avg_weekly_minutes??'—')+' min/wk</strong><br>Benchmark: <strong>'+(y.benchmark||'—')+'</strong><br><br><span class="note">HRV/sleep/RHR affect readiness, not sport level.</span>'})}
+function boot(){const tryIt=()=>{if($('pg-sports')){addEstimatorUI();restore()}else setTimeout(tryIt,300)};tryIt();const top=document.querySelector('.top small');if(top)top.textContent='v3.1 · Sport Level Estimator';document.title='AthleteOS v3.1'}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,700));else setTimeout(boot,700);</script>
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db=createClient('https://austsxdtggtoyrjpwjbj.supabase.co','sb_publishable_ipEuuZhqgPbL-G1MbLvzgQ_UmKWOngO');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function localDate(){const d=new Date();const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day}
+function stateMeta(s){s=String(s||'green').toLowerCase();return s==='red'?{label:'RED — Recovery',klass:'ready-red',msg:'Recovery/load signals require a recovery-focused day.'}:s==='yellow'?{label:'YELLOW — Reduce Load',klass:'ready-yellow',msg:'Reduce volume/intensity while preserving the session purpose.'}:{label:'GREEN — Follow Plan',klass:'ready-green',msg:'Available recovery/load data supports following the plan.'}}
+async function syncCanonical(){
+ const g=await db.auth.getSession(); const u=g.data.session?.user; if(!u)return;
+ const date=localDate();
+ const [rr,cr]=await Promise.all([
+   db.from('readiness_daily').select('readiness_state,decision_reason').eq('user_id',u.id).eq('date',date).maybeSingle(),
+   db.from('coaching_recommendations').select('decision_state,planned_title,recommended_duration_min,why,primary_seat').eq('user_id',u.id).eq('recommendation_date',date).eq('recommendation_type','daily_training').maybeSingle()
+ ]);
+ const state=(cr.data?.decision_state||rr.data?.readiness_state||'green').toLowerCase();
+ const meta=stateMeta(state);
+ const box=document.getElementById('readiness-decision');
+ if(box){box.className='readiness-box '+meta.klass; const reason=rr.data?.decision_reason?' Signals: '+rr.data.decision_reason+'.':''; box.innerHTML='<strong>'+meta.label+'</strong><div class="note" style="margin-top:4px">'+esc(meta.msg+reason)+'</div>';}
+ const badge=document.getElementById('cv-state'); if(badge){badge.textContent=state.toUpperCase();badge.className='cv-state cv-'+state}
+ if(cr.data){
+   const title=document.getElementById('cv-title'); if(title)title.textContent=cr.data.planned_title||'Today';
+   const dur=document.getElementById('cv-duration'); if(dur)dur.textContent=cr.data.recommended_duration_min!=null?cr.data.recommended_duration_min+' min':'As tolerated';
+   const why=document.getElementById('cv-why'); if(why)why.innerHTML='<strong>Why this workout?</strong><br>'+esc(cr.data.why||'Generated from the coaching engine.');
+   const change=document.getElementById('cv-change'); if(change){const txt=state==='green'?'No recovery-driven reduction today.':state==='yellow'?'Today is modified: reduce volume/intensity and keep strength submaximal.':'Today is replaced or heavily reduced: recovery takes priority over performance work.';change.innerHTML='<strong>What changed?</strong><br>'+esc(txt)}
+ }
+}
+function hook(){syncCanonical();document.addEventListener('click',e=>{const t=e.target;if(t&&/save readiness/i.test(t.textContent||''))setTimeout(syncCanonical,900)},true);document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncCanonical()});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(hook,800));else setTimeout(hook,800);
+</script>
+<style>
+.pg-help-wrap{position:relative}
+.pg-help-q{position:absolute;right:7px;top:7px;width:22px!important;height:22px!important;min-height:22px!important;padding:0!important;border-radius:50%!important;background:#2a3441!important;border:1px solid #536173!important;color:#eaf0f7!important;font-size:13px!important;font-weight:900!important;line-height:20px!important;z-index:5;margin:0!important}
+.pg-help-wrap input,.pg-help-wrap select{padding-right:36px!important}
+#pg-help-modal{display:none;position:fixed;inset:0;z-index:9999}
+#pg-help-modal.open{display:block}
+.pg-help-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.62)}
+.pg-help-sheet{position:absolute;left:18px;right:18px;bottom:24px;background:#171d25;border:1px solid #3a4655;border-radius:20px;padding:20px;box-shadow:0 18px 60px rgba(0,0,0,.55)}
+.pg-help-sheet h3{font-size:22px;margin:5px 32px 9px 0}
+.pg-help-sheet .note{font-size:15px;line-height:1.45;color:#c4ccd6}
+.pg-help-close{position:absolute;right:12px;top:10px;width:34px!important;height:34px!important;min-height:34px!important;border-radius:50%!important;padding:0!important;background:#252d38!important;font-size:24px!important;line-height:30px!important;margin:0!important}
+</style><script>
+const HELP={
+  'pg-objective':{t:'Primary objective',d:'Choose what AthleteOS should optimize first. Health & longevity prioritizes sustainable fitness, recovery, strength and long-term health. Performance allows more race-specific or higher-intensity tradeoffs.'},
+  'pg-overall':{t:'Overall training level',d:'Your general endurance-training background across all sports. This does not replace the sport-specific levels below. AthleteOS uses the sport-specific level when prescribing a run, ride, swim or strength session.'},
+  'pg-hours':{t:'Weekly hours',d:'The total amount of training time you can realistically sustain in a normal week, across all sports combined. Enter a typical target, not your maximum possible week.'},
+  'pg-sessions':{t:'Sessions per week',d:'The total number of workouts you want AthleteOS to schedule in a normal week. A bike + strength double counts as two sessions.'},
+  'pg-weekday':{t:'Weekday max minutes',d:'The longest single training session you can usually fit on a weekday. AthleteOS uses this as a scheduling limit.'},
+  'pg-weekend':{t:'Weekend max minutes',d:'The longest single training session you can usually fit on Saturday or Sunday. This helps AthleteOS place long rides, long runs or longer combined sessions.'},
+  'pg-longday':{t:'Long-session day',d:'The day you prefer for your longest endurance session of the week. AthleteOS may still move it when recovery, travel, races or availability require a change.'},
+  'pg-doubles':{t:'Allow double-session days',d:'Turn this on if you are willing to complete two separate workouts on the same day, such as an easy run in the morning and strength later.'}
+};
+const SPORT_HELP={
+ level:{t:'Sport experience level',d:'Your current experience in this specific sport: Beginner, Recreational, Trained or Advanced. AthleteOS can estimate this automatically from your training history and benchmarks.'},
+ age:{t:'Training age',d:'How long you have trained consistently in this specific sport, measured in months. Example: if you have been running regularly for 18 months, enter 18. Count consistent training, not the first time you ever tried the sport.'},
+ freq:{t:'Sessions per week',d:'How many workouts per week you want in this specific sport. Example: 3 cycling sessions and 3 strength sessions.'},
+ min:{t:'Minutes per week',d:'Your target weekly training time for this specific sport. AthleteOS uses this with your available days and overall weekly-hour target to size the program.'}
+};
+function helpFor(el){
+ if(HELP[el.id]) return HELP[el.id];
+ const m=el.id.match(/^pg-(level|age|freq|min)-(run|bike|swim|strength)$/);
+ if(m) return SPORT_HELP[m[1]];
+ const d=el.id.match(/^pg-day-(\d)$/);
+ if(d) return {t:'Available day',d:'Turn this on if training can be scheduled on this day. Turn it off when this is normally a no-training day.'};
+ const dm=el.id.match(/^pg-day-min-(\d)$/);
+ if(dm) return {t:'Maximum minutes available',d:'The maximum training time you can normally fit on this day. AthleteOS will keep scheduled sessions inside this limit.'};
+ return null;
+}
+function openHelp(h){
+ let modal=document.getElementById('pg-help-modal');
+ if(!modal){
+   modal=document.createElement('div');modal.id='pg-help-modal';
+   modal.innerHTML='<div class="pg-help-backdrop"></div><div class="pg-help-sheet"><button class="pg-help-close" aria-label="Close">×</button><div class="section-title">FIELD HELP</div><h3 id="pg-help-title"></h3><div id="pg-help-body" class="note"></div></div>';
+   document.body.appendChild(modal);
+   modal.querySelector('.pg-help-close').onclick=()=>modal.classList.remove('open');
+   modal.querySelector('.pg-help-backdrop').onclick=()=>modal.classList.remove('open');
+ }
+ document.getElementById('pg-help-title').textContent=h.t;
+ document.getElementById('pg-help-body').textContent=h.d;
+ modal.classList.add('open');
+}
+function addFieldHelp(){
+ const page=document.querySelector('[data-page="program"]'); if(!page)return false;
+ page.querySelectorAll('input,select').forEach(el=>{
+   if(el.dataset.helpReady)return;
+   const h=helpFor(el); if(!h)return;
+   el.dataset.helpReady='1';
+   const parent=el.parentElement;
+   if(!parent)return;
+   parent.classList.add('pg-help-wrap');
+   const b=document.createElement('button');
+   b.type='button'; b.className='pg-help-q'; b.textContent='?'; b.setAttribute('aria-label','Explain '+h.t);
+   b.onclick=(e)=>{e.preventDefault();e.stopPropagation();openHelp(h)};
+   parent.appendChild(b);
+ });
+ return true;
+}
+function bootHelp(){
+ const run=()=>{if(!addFieldHelp())setTimeout(run,300)};
+ run();
+ const mo=new MutationObserver(()=>addFieldHelp());
+ mo.observe(document.body,{childList:true,subtree:true});
+ const top=document.querySelector('.top small');if(top)top.textContent='v3.3 · Program Help';
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(bootHelp,900));else setTimeout(bootHelp,900);
+</script>
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db=createClient('https://austsxdtggtoyrjpwjbj.supabase.co','sb_publishable_ipEuuZhqgPbL-G1MbLvzgQ_UmKWOngO');
+let canonical=null, applying=false;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function localDate(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function meta(s){s=String(s||'green').toLowerCase();return s==='red'?{klass:'ready-red',label:'RED — Recovery',msg:'Recovery/load signals require a recovery-focused day.'}:s==='yellow'?{klass:'ready-yellow',label:'YELLOW — Reduce Load',msg:'Reduce volume/intensity while preserving the session purpose.'}:{klass:'ready-green',label:'GREEN — Follow Plan',msg:'Available recovery/load data supports following the plan.'}}
+function paint(){
+ if(!canonical||applying)return;
+ const box=document.getElementById('readiness-decision'); if(!box)return;
+ if(canonical.model&&window.__renderReadinessModel){
+   applying=true;
+   window.__renderReadinessModel(canonical.model);
+   applying=false;
+ }else{
+ const m=meta(canonical.state);
+ const reason=canonical.reason?' Signals: '+canonical.reason+'.':'';
+ const desired='<strong>'+m.label+'</strong><div class="note" style="margin-top:4px">'+esc(m.msg+reason)+'</div>';
+ if(box.className!=='readiness-box '+m.klass || box.innerHTML!==desired){
+   applying=true;
+   box.className='readiness-box '+m.klass;
+   box.innerHTML=desired;
+   applying=false;
+ }
+ }
+ const badge=document.getElementById('cv-state');
+ if(badge){
+   const want=String(canonical.state||'green').toUpperCase();
+   const cls='cv-state cv-'+String(canonical.state||'green').toLowerCase();
+   if(badge.textContent!==want||badge.className!==cls){badge.textContent=want;badge.className=cls}
+ }
+}
+async function loadCanonical(){
+ const g=await db.auth.getSession();const u=g.data.session?.user;if(!u)return;
+ const date=localDate();
+ const [rr,cr]=await Promise.all([
+   db.from('readiness_daily').select('readiness_state,decision_reason,raw_data').eq('user_id',u.id).eq('date',date).maybeSingle(),
+   db.from('coaching_recommendations').select('decision_state').eq('user_id',u.id).eq('recommendation_date',date).eq('recommendation_type','daily_training').maybeSingle()
+ ]);
+ canonical={state:(cr.data?.decision_state||rr.data?.readiness_state||'green').toLowerCase(),reason:rr.data?.decision_reason||'',model:rr.data?.raw_data?.readiness_model||null};
+ paint();
+}
+function boot(){
+ loadCanonical();
+ const obs=new MutationObserver(()=>{ if(!applying) paint(); });
+ obs.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});
+ document.addEventListener('click',e=>{if(/save readiness/i.test(e.target?.textContent||''))setTimeout(loadCanonical,700)},true);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadCanonical()});
+ setInterval(paint,1500);
+ const top=document.querySelector('.top small');if(top)top.textContent='v3.7 · Optional 4-Day Strength Split';
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,700));else setTimeout(boot,700);
+</script>
+<style>
+.pg-allowed-acts{margin-top:10px;padding-top:10px;border-top:1px solid #303844}
+.pg-allowed-head{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:800;color:#aeb8c5;text-transform:uppercase;letter-spacing:.08em}
+.pg-mini-help{width:22px!important;height:22px!important;min-height:22px!important;padding:0!important;margin:0!important;border-radius:50%!important;background:#2a3441!important;border:1px solid #536173!important;color:#eef4fb!important;font-size:13px!important;line-height:20px!important}
+.pg-act-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.pg-act-pill{display:flex;align-items:center;justify-content:center;gap:6px;background:#171d25;border:1px solid #394554;border-radius:11px;padding:10px 6px;font-weight:800}
+.pg-act-pill input{width:auto!important;margin:0!important}
+</style><script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db=createClient('https://austsxdtggtoyrjpwjbj.supabase.co','sb_publishable_ipEuuZhqgPbL-G1MbLvzgQ_UmKWOngO');
+const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const acts=[['run','Run'],['bike','Bike'],['strength','Strength']];
+const $=id=>document.getElementById(id);
+
+function openDayHelp(){
+ let modal=document.getElementById('pg-help-modal');
+ if(!modal)return;
+ const title=document.getElementById('pg-help-title');
+ const body=document.getElementById('pg-help-body');
+ if(title) title.textContent='Allowed activities';
+ if(body) body.textContent='Choose which types of training are realistically possible on this day. AthleteOS will only schedule activities you allow here. Example: if Tuesday is bike-only, leave Bike selected and turn Run and Strength off.';
+ modal.classList.add('open');
+}
+
+function addSportSelectors(){
+ const wrap=$('pg-days'); if(!wrap)return false;
+ days.forEach((d,i)=>{
+   const card=$('pg-day-'+i)?.closest('.program-day'); if(!card||card.querySelector('.pg-allowed-acts'))return;
+   const box=document.createElement('div');
+   box.className='pg-allowed-acts';
+   box.innerHTML='<div class="pg-allowed-head"><span>Allowed activities</span><button type="button" class="pg-mini-help" aria-label="Explain allowed activities">?</button></div><div class="pg-act-grid">'+
+     acts.map(([k,label])=>'<label class="pg-act-pill"><input type="checkbox" id="pg-act-'+i+'-'+k+'" data-day="'+i+'" data-act="'+k+'" checked><span>'+label+'</span></label>').join('')+
+     '</div>';
+   card.appendChild(box);
+   box.querySelector('.pg-mini-help').onclick=openDayHelp;
+ });
+ return true;
+}
+
+async function loadAllowed(){
+ const g=await db.auth.getSession();const u=g.data.session?.user;if(!u)return;
+ const r=await db.from('athlete_availability').select('weekday,allowed_activities').eq('user_id',u.id);
+ (r.data||[]).forEach(row=>{
+   const set=new Set(row.allowed_activities||['run','bike','strength']);
+   acts.forEach(([k])=>{const el=$('pg-act-'+row.weekday+'-'+k);if(el)el.checked=set.has(k)});
+ });
+}
+
+async function saveAllowed(){
+ const g=await db.auth.getSession();const u=g.data.session?.user;if(!u)return;
+ const rows=days.map((d,i)=>({
+   user_id:u.id,
+   weekday:i,
+   window_label:'primary',
+   allowed_activities:acts.filter(([k])=>$('pg-act-'+i+'-'+k)?.checked).map(([k])=>k),
+   updated_at:new Date().toISOString()
+ }));
+ const r=await db.from('athlete_availability').upsert(rows,{onConflict:'user_id,weekday,window_label'});
+ const st=$('pg-status');
+ if(r.error){if(st){st.textContent=r.error.message;st.className='status warn'}}else if(st){st.textContent='Program setup saved ✓';st.className='status good'}
+}
+
+function enforceAtLeastOne(e){
+ const cb=e.target.closest('.pg-act-pill input'); if(!cb)return;
+ const i=cb.dataset.day;
+ const selected=acts.filter(([k])=>$('pg-act-'+i+'-'+k)?.checked);
+ if(selected.length===0){cb.checked=true}
+}
+
+function boot(){
+ const wait=()=>{
+   if(!addSportSelectors()){setTimeout(wait,300);return}
+   loadAllowed();
+   $('pg-days')?.addEventListener('change',enforceAtLeastOne);
+   $('pg-save')?.addEventListener('click',()=>setTimeout(saveAllowed,250));
+   const top=document.querySelector('.top small');if(top)top.textContent='v3.7 · Optional 4-Day Strength Split';document.title='AthleteOS v3.7';
+  };
+ wait();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,900));else setTimeout(boot,900);
+</script>
+
+<style id="strength-v285-style">
+.vol-badge{margin-top:5px;font-size:12px;font-weight:800;color:#cfd7e3}.shr-card{margin-top:14px;padding:14px;border-radius:15px;background:#10151b;border:1px solid #2a313a}.shr-title{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#9ca6b3}.shr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.shr-stat{background:#1b2027;border-radius:12px;padding:10px}.shr-stat span{display:block;font-size:10px;color:#9ca6b3;margin-bottom:3px}.shr-stat strong{font-size:16px}.shr-chart{margin-top:10px;background:#1b2027;border-radius:12px;padding:10px}.shr-chart svg{width:100%;height:155px;display:block}.shr-axis{fill:#9ca6b3;font-size:9px}.shr-gridline{stroke:#35404b;stroke-width:.6}.shr-line{fill:none;stroke:currentColor;stroke-width:2;vector-effect:non-scaling-stroke}.shr-zone{display:grid;grid-template-columns:32px 1fr 44px;gap:8px;align-items:center;font-size:11px;margin:7px 0}.shr-bar{height:8px;background:#252c35;border-radius:8px;overflow:hidden}.shr-bar span{display:block;height:100%;background:#e8eef7}.shr-note{font-size:11px;color:#9ca6b3;line-height:1.45;margin-top:8px}
+</style>
+<script type="module" id="strength-v285-script">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db=createClient('https://austsxdtggtoyrjpwjbj.supabase.co','sb_publishable_ipEuuZhqgPbL-G1MbLvzgQ_UmKWOngO');
+const arr=s=>Array.isArray(s)?s:(Array.isArray(s?.data)?s.data:[]);
+const fmt=s=>{s=Math.max(0,Math.round(Number(s)||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+function chart(hr,times){if(hr.length<3)return '';const W=320,H=150,L=40,R=8,T=8,B=28,PW=W-L-R,PH=H-T-B;const xs=times.length===hr.length?times:hr.map((_,i)=>i);const ys=hr.map(Number),xmin=0,xmax=Math.max(...xs,1),ymin=Math.max(35,Math.floor(Math.min(...ys)/10)*10-10),ymax=Math.min(220,Math.ceil(Math.max(...ys)/10)*10+10);const X=x=>L+(x-xmin)/Math.max(1,xmax-xmin)*PW,Y=y=>T+(ymax-y)/Math.max(1,ymax-ymin)*PH;let svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">';for(let i=0;i<5;i++){const y=ymin+(ymax-ymin)*i/4;svg+='<line class="shr-gridline" x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(y)+'" y2="'+Y(y)+'"/><text class="shr-axis" x="'+(L-5)+'" y="'+(Y(y)+3)+'" text-anchor="end">'+Math.round(y)+'</text>'}for(let i=0;i<5;i++){const x=xmin+(xmax-xmin)*i/4;svg+='<text class="shr-axis" x="'+X(x)+'" y="'+(H-9)+'" text-anchor="middle">'+fmt(x)+'</text>'}svg+='<polyline class="shr-line" points="'+hr.map((v,i)=>X(xs[i]).toFixed(1)+','+Y(Number(v)).toFixed(1)).join(' ')+'"/></svg>';return '<div class="shr-chart"><div class="shr-title">Heart rate over workout</div>'+svg+'<div class="shr-note" style="display:flex;justify-content:space-between"><span>Heart rate (bpm)</span><span>Workout time</span></div></div>'}
+function zones(hr,maxHr){maxHr=maxHr||180;const z=[0,0,0,0,0];hr.forEach(v=>{const p=Number(v)/maxHr;if(p<.65)z[0]++;else if(p<.81)z[1]++;else if(p<.89)z[2]++;else if(p<.98)z[3]++;else z[4]++});return z.map((v,i)=>{const pct=hr.length?Math.round(v/hr.length*100):0;return '<div class="shr-zone"><strong>Z'+(i+1)+'</strong><div class="shr-bar"><span style="width:'+pct+'%"></span></div><span>'+pct+'%</span></div>'}).join('')}
+function closeTime(a,b){return Math.abs(new Date(a)-new Date(b))<=30*60*1000}
+function closeDur(a,b){a=Number(a)||0;b=Number(b)||0;return !a||!b||Math.abs(a-b)<=Math.max(600,.25*Math.max(a,b))}
+async function canonicalize(userId){const [{data:acts},{data:sessions}]=await Promise.all([db.from('activities').select('*').eq('user_id',userId).eq('sport','strength').gte('started_at',new Date(Date.now()-7*86400000).toISOString()).order('started_at',{ascending:false}),db.from('strength_sessions').select('*').eq('user_id',userId).order('session_date',{ascending:false}).limit(20)]);for(const s of sessions||[]){if(!s.started_at)continue;let m=(acts||[]).filter(a=>closeTime(a.started_at,s.started_at)&&closeDur(a.duration_sec,s.duration_sec));if(!m.length)continue;m.sort((a,b)=>({strava:3,apple_health:2,manual:1}[b.source]||0)-({strava:3,apple_health:2,manual:1}[a.source]||0));const c=m[0],others=m.slice(1);const calories=[c,...others].map(x=>x.calories).find(x=>x!=null)??null;const duration=[c,...others].map(x=>x.duration_sec).find(x=>x!=null)??s.duration_sec??null;const raw={...(c.raw_data||{}),strength_session_id:s.id,merged_sources:others.map(x=>({id:x.id,source:x.source,external_id:x.external_id}))};await db.from('activities').update({name:s.title,duration_sec:duration,calories,raw_data:raw}).eq('id',c.id).eq('user_id',userId);await db.from('strength_sessions').update({activity_id:c.id}).eq('id',s.id).eq('user_id',userId);if(others.length)await db.from('activities').delete().in('id',others.map(x=>x.id)).eq('user_id',userId)}}
+async function forceSync(){const {data:{session}}=await db.auth.getSession();if(!session)return false;const key='aos_v285_sync_once';if(sessionStorage.getItem(key))return false;sessionStorage.setItem(key,'1');try{const {data,error}=await db.functions.invoke('strava-sync',{body:{after:new Date(Date.now()-3*86400000).toISOString()}});if(error)console.warn(error);await canonicalize(session.user.id);return !!(data?.imported||data?.merged_duplicates)}catch(e){console.warn(e);return false}}
+async function enhance(){const {data:{session}}=await db.auth.getSession();if(!session)return;const [{data:acts},{data:sessions},{data:sets},{data:profile}]=await Promise.all([db.from('activities').select('*').eq('user_id',session.user.id).eq('sport','strength').order('started_at',{ascending:false}).limit(20),db.from('strength_sessions').select('*').eq('user_id',session.user.id).order('session_date',{ascending:false}).limit(20),db.from('strength_sets').select('session_id,actual_weight,actual_reps,completed').eq('user_id',session.user.id),db.from('profiles').select('max_hr_bpm').eq('id',session.user.id).maybeSingle()]);const maxHr=Number(profile?.max_hr_bpm)||180;for(const s of sessions||[]){const a=(acts||[]).find(x=>x.id===s.activity_id)|| (acts||[]).find(x=>s.started_at&&closeTime(x.started_at,s.started_at)&&closeDur(x.duration_sec,s.duration_sec));if(!a)continue;const vol=(sets||[]).filter(x=>x.session_id===s.id&&x.completed!==false).reduce((sum,x)=>sum+(Number(x.actual_weight)||0)*(Number(x.actual_reps)||0),0);const cards=[...document.querySelectorAll('#history-list .history-card')].filter(c=>c.querySelector('.entry-title')?.textContent.trim()===a.name||c.querySelector('.entry-title')?.textContent.trim()===s.title);for(const c of cards){const title=c.querySelector('.entry-title');if(title)title.textContent=s.title;const sub=c.querySelector('.entry-sub');if(sub)sub.textContent=(a.duration_sec?fmt(a.duration_sec):'')+(vol?' · '+Math.round(vol).toLocaleString()+' lb volume':'');const right=c.querySelector('.history-head-right');if(right&&!right.querySelector('.vol-badge')&&vol){const v=document.createElement('div');v.className='vol-badge';v.textContent=Math.round(vol).toLocaleString()+' lb';right.appendChild(v)}const d=c.querySelector('.history-detail');if(!d||d.querySelector('.shr-card'))continue;const streams=a.raw_data?.streams||{},hr=arr(streams.heartrate).map(Number).filter(v=>Number.isFinite(v)&&v>=35&&v<=220),tm=arr(streams.time).map(Number);let html='<div class="shr-card"><div class="shr-title">Strength heart metrics</div><div class="shr-grid"><div class="shr-stat"><span>Average HR</span><strong>'+(a.avg_hr!=null?a.avg_hr+' bpm':'—')+'</strong></div><div class="shr-stat"><span>Max HR</span><strong>'+(a.max_hr!=null?a.max_hr+' bpm':'—')+'</strong></div><div class="shr-stat"><span>Duration</span><strong>'+fmt(a.duration_sec||0)+'</strong></div><div class="shr-stat"><span>Total volume</span><strong>'+Math.round(vol).toLocaleString()+' lb</strong></div></div>';if(hr.length>=3){html+=chart(hr,tm)+'<div class="shr-chart"><div class="shr-title">Heart-rate zones</div>'+zones(hr,maxHr)+'</div><div class="shr-note">Using '+hr.length+' Strava heart-rate samples from this weight-training activity.</div>'}else html+='<div class="shr-note">Strava is connected, but the detailed HR stream has not reached AthleteOS yet. This build forces a fresh 3-day Strava sync when History opens.</div>';html+='</div>';d.insertAdjacentHTML('beforeend',html)}const sc=[...document.querySelectorAll('#strength-history .history-card')].find(c=>c.querySelector('.entry-title')?.textContent.trim()===s.title);if(sc){const ac=cards[0],sd=sc.querySelector('.history-detail'),ad=ac?.querySelector('.history-detail');if(ad&&sd&&!ad.querySelector('.merged-strength-detail')){const box=document.createElement('div');box.className='merged-strength-detail';box.innerHTML='<div class="section-title" style="margin-top:14px">Strength sets & progression</div>'+sd.innerHTML;ad.appendChild(box)}sc.style.display='none'}}}
+async function run(){const synced=await forceSync();if(synced){location.reload();return}await enhance()}
+const obs=new MutationObserver(()=>setTimeout(enhance,120));const hl=document.getElementById('history-list'),sl=document.getElementById('strength-history');if(hl)obs.observe(hl,{childList:true,subtree:true});if(sl)obs.observe(sl,{childList:true,subtree:true});document.addEventListener('click',e=>{if(e.target?.dataset?.target==='history')setTimeout(run,250)},true);setTimeout(run,850);
+</script>
+</body>
+</html>
